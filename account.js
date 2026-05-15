@@ -35,7 +35,7 @@ if (require.main === module) {
             const { username, name, surname, email, age, password } = req.body;
 
             if (!username || !password) {
-                return res.status(400).json({ error: 'Both Username and Password are required!' });
+                return res.status(400).json({ error: 'Both username and password are required!' });
             }
 
             //Password Hashing

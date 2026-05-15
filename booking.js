@@ -20,6 +20,7 @@ if (require.main === module) {
 
 
     app.post('/booking', async (req, res) => {
+        //Creates a new booking, uploads it to firestore under bookings/{bookingId}, and prevents overwriting existing bookings
         try {
             const { startLocation, endLocation, dateTime, noOfPassengers, cabType, email } = req.body;
 
@@ -51,7 +52,6 @@ if (require.main === module) {
                 noOfPassengers,
                 cabType,
                 email,
-                "status": "pending",
                 createdAt: new Date(),
             };
 
@@ -74,58 +74,43 @@ if (require.main === module) {
         }
     });
 
-    // app.post('/account/login', async (req, res) => {
-    //     //Login endpoint, checks if the email exists and compares password has to the password provided, returning either a success of failure message
-    //     try {
-    //         const { email, password } = req.body;
-    //         if (!email || !password) {
-    //             return res.status(400).json({ error: 'Email and password are required!' });
-    //         }
+    //You need to test this one later considering date being passed
+    app.get('/booking/getAllBookings/:status', async (req, res) => {
+        //Fetches all bookings
+        try {
+            const { status } = req.params;
+            const bookings = await db.collection('bookings').where('status', '==', status.toLowerCase()).get();
 
-    //         const doc = await db.collection('accounts').doc(email).get();
+            const bookingData = [];
 
-    //         if (!doc.exists) {
-    //             return res.status(404).json({ error: 'Invalid email or password' });
-    //         }
+            if (status != "past" && status != "upcoming") {
+                return res.status(400).json({ error: 'Status must be either past or upcoming!' });
+            }
 
-    //         const accountData = doc.data();
-    //         const passwordMatch = await bcrypt.compare(password, accountData.passwordHash);
+            bookings.forEach((doc) => {
+                let dateTime = doc.data().dateTime.toDate();
+                let now = new Date();
 
-    //         if (passwordMatch) {
-    //             res.json({ message: 'Login successful' });
-    //             console.log(`Login successful for: ${email}`);
-    //         } else {
-    //             res.status(401).json({ error: 'Invalid password' });
-    //             console.log(`Login failed for: ${email} - Invalid password`);
-    //         }
-    //     } catch (err) {
-    //         console.error('Error during login:', err);
-    //         res.status(500).json({ error: 'Internal server error' });
-    //     }
-    // });
+                if (status === "past" && dateTime < now) {
 
-    // app.get('/account/:email', async (req, res) => {
-    //     //Fetches account from firestore based on the email, returning details without the password hash
-    //     try {
-    //         const { email } = req.params;
-    //         const doc = await db.collection('accounts').doc(email).get();
+                    bookingData.push(doc.data());
+                }
+                else if (status === "upcoming" && dateTime >= now) {
+                    bookingData.push(doc.data());
+                }
+            });
 
-    //         if (!doc.exists) {
-    //             return res.status(404).json({ error: 'Account not found' });
-    //         }
+            if (bookingData.length === 0) {
+                return res.status(404).json({ error: 'No bookings found with the specified status!' });
+            }
 
-    //         //Return the account without the hash
-    //         safeAccountData = doc.data();
-    //         delete safeAccountData.passwordHash;
-
-    //         res.json(safeAccountData);
-    //         console.log(`Fetched account for: ${email}`);
-    //     } catch (err) {
-    //         console.error('Error fetching account:', err);
-    //         res.status(500).json({ error: 'Internal server error' });
-    //     }
-    // });
-
+            res.json(bookingData);
+            console.log(`Fetched all bookings with status: ${status}`);
+        } catch (err) {
+            console.error('Error fetching bookings:', err);
+            res.status(500).json({ error: 'Internal server error' });
+        }
+    });
 
     app.listen(3001, () => {
         console.log('Server is running on port 3001');
