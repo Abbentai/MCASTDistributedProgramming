@@ -21,13 +21,14 @@ if (require.main === module) {
 
     app.post('/booking', async (req, res) => {
         //Creates a new booking, uploads it to firestore under bookings/{bookingId}, and prevents overwriting existing bookings
+        //startLocation and endLocation are coordinates in the form of { lat: number, lng: number }
         try {
-            const { startLocation, endLocation, dateTime, noOfPassengers, cabType, email } = req.body;
+            const { startLocation, endLocation, date, time, noOfPassengers, cabType, email } = req.body;
 
             lowerCabType = cabType.toLowerCase();
 
             //Input validation
-            if (!startLocation || !endLocation || !dateTime || !noOfPassengers || !lowerCabType || !email) {
+            if (!startLocation || !endLocation || !date || !time || !noOfPassengers || !lowerCabType || !email) {
                 return res.status(400).json({ error: 'All fields are required!' });
             }
 
@@ -48,7 +49,8 @@ if (require.main === module) {
                 bookingId: `${email}-${Date.now()}`,
                 startLocation,
                 endLocation,
-                dateTime,
+                date,
+                time,   
                 noOfPassengers,
                 cabType,
                 email,
@@ -76,20 +78,24 @@ if (require.main === module) {
 
     //You need to test this one later considering date being passed
     app.get('/booking/getAllBookings/:status', async (req, res) => {
-        //Fetches all bookings
+        //Fetches all bookings based on status, either past or upcoming.
         try {
             const { status } = req.params;
-            const bookings = await db.collection('bookings').where('status', '==', status.toLowerCase()).get();
-
-            const bookingData = [];
 
             if (status != "past" && status != "upcoming") {
                 return res.status(400).json({ error: 'Status must be either past or upcoming!' });
             }
 
+            const bookings = await db.collection('bookings').get();
+            const now = new Date();
+            const bookingData = [];
+
             bookings.forEach((doc) => {
-                let dateTime = doc.data().dateTime.toDate();
-                let now = new Date();
+                const data = doc.data();
+
+                //Parsing string temporarily before changed to a straight up timestamp 
+                const [day, month, year] = data.date.split('/');
+                const dateTime = new Date(`${year}-${month}-${day}T${data.time}`);
 
                 if (status === "past" && dateTime < now) {
 
