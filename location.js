@@ -177,62 +177,63 @@ if (require.main === module) {
             res.status(500).json({ error: 'Internal server error' });
         }
     });
+
+    app.get('/location/weather/:city', async (req, res) => {
+        //Fetches the current weather details for a specific city/locality
+        try {
+            let { city } = req.params;
+            city = city.trim();
+
+            if (!city) {
+                return res.status(400).json({ error: 'City is required!' });
+            }
+
+            const response = await axios.get('https://weatherapi-com.p.rapidapi.com/current.json', {
+                params: { q: city },
+                headers: {
+                    'Content-Type': 'application/json',
+                    'x-rapidapi-host': 'weatherapi-com.p.rapidapi.com',
+                    'x-rapidapi-key': process.env.RAPIDAPI_KEY,
+                },
+            });
+
+            const { location, current } = response.data;
+
+            //Return a clean subset of the response
+            return res.status(200).json({
+                location: {
+                    name: location.name,
+                    region: location.region,
+                    country: location.country,
+                    localtime: location.localtime,
+                },
+                weather: {
+                    condition: current.condition.text,
+                    tempC: current.temp_c,
+                    tempF: current.temp_f,
+                    feelsLikeC: current.feelslike_c,
+                    humidity: current.humidity,
+                    windKph: current.wind_kph,
+                    windDir: current.wind_dir,
+                    uvIndex: current.uv,
+                    isDay: current.is_day === 1,
+                },
+            });
+
+        } catch (err) {
+            //WeatherAPI seems to return 400 for locations that aren't count
+            if (err.response?.status === 400) {
+                return res.status(404).json({ error: `City "${req.params.city}" not found.` });
+            }
+            console.error('Error fetching weather:', err);
+            return res.status(500).json({ error: 'Internal server error' });
+        }
+    });
+
     app.listen(3003, () => {
         console.log('Server is running on port 3003');
         console.log("URL because im lazy: http://localhost:3003/location");
     });
-
-    app.get('/location/weather/:city', async (req, res) => {
-    //Fetches the current weather details for a specific city/locality
-    try {
-        let { city } = req.params;
-        city = city.trim();
-
-        if (!city) {
-            return res.status(400).json({ error: 'City is required!' });
-        }
-
-        const response = await axios.get('https://weatherapi-com.p.rapidapi.com/current.json', {
-            params: { q: city },
-            headers: {
-                'Content-Type':    'application/json',
-                'x-rapidapi-host': 'weatherapi-com.p.rapidapi.com',
-                'x-rapidapi-key':  process.env.RAPIDAPI_KEY,
-            },
-        });
-
-        const { location, current } = response.data;
-
-        //Return a clean subset of the response
-        return res.status(200).json({
-            location: {
-                name:    location.name,
-                region:  location.region,
-                country: location.country,
-                localtime: location.localtime,
-            },
-            weather: {
-                condition:   current.condition.text,
-                tempC:       current.temp_c,
-                tempF:       current.temp_f,
-                feelsLikeC:  current.feelslike_c,
-                humidity:    current.humidity,
-                windKph:     current.wind_kph,
-                windDir:     current.wind_dir,
-                uvIndex:     current.uv,
-                isDay:       current.is_day === 1,
-            },
-        });
-
-    } catch (err) {
-        //WeatherAPI seems to return 400 for locations that aren't count
-        if (err.response?.status === 400) {
-            return res.status(404).json({ error: `City "${req.params.city}" not found.` });
-        }
-        console.error('Error fetching weather:', err);
-        return res.status(500).json({ error: 'Internal server error' });
-    }
-});
 }
 
-const db = require('./server.js');
+const { db, appEmitter } = require('./server.js');

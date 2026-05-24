@@ -124,4 +124,4 @@ if (require.main === module) {
     });
 }
 
-const db = require('./server.js');
+const { db, appEmitter } = require('./server.js');

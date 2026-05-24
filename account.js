@@ -131,9 +131,76 @@ if (require.main === module) {
         console.log('Server is running on port 3000');
         console.log("URL because im lazy: http://localhost:3000/account");
     });
+
+    app.post('/notification/:email', async (req, res) => {
+        //Saving a notification to the database
+        try {
+            const { header, message, type } = req.body;
+            const { email } = req.params;
+
+            if (!header || !message || !type) {
+                return res.status(400).json({ error: 'Header, message, and type are required!' });
+            }
+
+            accountExists(email).then(exists => {
+                if (!exists) {
+                    return res.status(404).json({ error: 'Account with provided email does not exist!' });
+                }
+            });
+
+            const notificationData = {
+                header,
+                message,
+                type,
+                createdAt: new Date(),
+            };
+
+            //Storing under accounts/{email}/notifications/{autoId}
+            const docRef = db.collection('accounts').doc(email).collection('notifications').doc(crypto.randomUUID());
+
+            await docRef.set(notificationData);
+
+            res.status(201).json({ message: 'Notification created' });
+            console.log(`Notification created for: ${email}`);
+        } catch (err) {
+            console.error('Error creating notification:', err);
+            res.status(500).json({ error: 'Internal server error' });
+        }
+    });
+
+    app.get('/notification/:email', async (req, res) => {
+        //Fetches all notifications for a specific email
+        try {
+            let { email } = req.params;
+
+            email = email.trim();
+
+            //Input validation
+            if (!email) {
+                return res.status(400).json({ error: 'Email is required!' });
+            }
+
+            if (!await accountExists(email)) {
+                return res.status(404).json({ error: 'Account with provided email does not exist!' });
+            }
+
+            const snapshot = await db.collection('accounts').doc(email).collection('notifications').get();
+            if (snapshot.empty) {
+                return res.status(404).json({ error: 'No notifications found for this email!' });
+            }
+
+            const notifications = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+            return res.status(200).json(notifications);
+        }
+        catch (err) {
+            console.error('Error retrieving notification:', err);
+            res.status(500).json({ error: 'Internal server error' });
+        }
+    });
 }
 
-const db = require('./server.js');
+const { db, appEmitter } = require('./server.js');
 
 async function accountExists(email) {
     const doc = await db.collection('accounts').doc(email).get();

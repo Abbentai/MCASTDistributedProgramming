@@ -189,4 +189,4 @@ function parseLatLng(locationStr) {
 }
 
 
-const db = require('./server.js');
+const { db, appEmitter } = require('./server.js');
