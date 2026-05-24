@@ -3,6 +3,7 @@ const admin = require('firebase-admin');
 const axios = require('axios');
 const { getFirestore } = require('firebase-admin/firestore');
 const { accountExists } = require('./account.js');
+require('dotenv').config();
 
 //Error codes in case you need them
 //https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status
