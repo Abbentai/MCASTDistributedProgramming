@@ -33,13 +33,13 @@ if (require.main === module) {
     const app = express();
     app.use(express.json());
 
-    app.get('/', (req, res) => {
-        res.send('API running');
-        console.log("request sent for /");
+    app.get('/api/payment', (req, res) => {
+        res.send('Payment service is running');
+        console.log("request sent for /api/payment");
     });
 
 
-    app.get('/payment/calculateprice/:bookingId', async (req, res) => {
+    app.get('/api/payment/calculateprice/:bookingId', async (req, res) => {
         try {
             //Retrieve booking details from firestore
             const { bookingId } = req.params;
@@ -123,9 +123,9 @@ if (require.main === module) {
         }
     });
 
-    app.listen(3002, () => {
-        console.log('Server is running on port 3002');
-        console.log("URL because im lazy: http://localhost:3002/payment");
+    app.listen(3003, () => {
+        console.log('Server is running on port 3003');
+        console.log("URL because im lazy: http://localhost:3003/api/payment");
     });
 }
 

@@ -1,0 +1,1785 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RIDEX — Premium Taxi Service</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ── TOKENS ───────────────────────────────── */
+    :root {
+      --bg:        #0b0d14;
+      --surface:   #12151f;
+      --panel:     #191d2c;
+      --border:    #252a3a;
+      --gold:      #c9a84c;
+      --gold-lt:   #e2c270;
+      --gold-dk:   #9b7a2e;
+      --text:      #e8e9ef;
+      --muted:     #7b8099;
+      --danger:    #e05252;
+      --success:   #4caf82;
+      --radius:    12px;
+      --radius-lg: 20px;
+      --shadow:    0 8px 32px rgba(0,0,0,.55);
+    }
+
+    /* ── RESET / BASE ─────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; }
+    html, body { height: 100%; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      font-size: 15px;
+      line-height: 1.6;
+    }
+
+    h1, h2, h3, .display-font {
+      font-family: 'Playfair Display', serif;
+    }
+
+    /* ── SCROLLBAR ────────────────────────────── */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+    /* ── SCREEN CONTROLLER ────────────────────── */
+    .screen { display: none; }
+    .screen.is-active { display: flex; }
+
+    /* ═══════════════════════════════════════════
+       LOGIN SCREEN
+    ═══════════════════════════════════════════ */
+    #screen-login {
+      min-height: 100vh;
+      align-items: center;
+      justify-content: center;
+      background:
+        radial-gradient(ellipse 80% 60% at 20% 10%, rgba(201,168,76,.12) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 80% at 80% 90%, rgba(201,168,76,.07) 0%, transparent 60%),
+        var(--bg);
+    }
+
+    .login-card {
+      width: 100%;
+      max-width: 440px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 3rem 2.5rem;
+      box-shadow: var(--shadow), 0 0 0 1px rgba(201,168,76,.08);
+      animation: fadeUp .5s ease both;
+    }
+
+    .login-logo {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .login-logo .wordmark {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.4rem;
+      font-weight: 700;
+      color: var(--gold);
+      letter-spacing: .08em;
+    }
+
+    .login-logo .tagline {
+      font-size: .75rem;
+      letter-spacing: .25em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-top: .2rem;
+    }
+
+    .gold-divider {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+      margin: 1.5rem 0;
+      opacity: .4;
+    }
+
+    /* ── BULMA OVERRIDES ──────────────────────── */
+    .label { color: var(--muted) !important; font-size: .78rem; letter-spacing: .1em; text-transform: uppercase; font-weight: 500; }
+
+    .input, .select select, .textarea {
+      background: var(--panel) !important;
+      border: 1px solid var(--border) !important;
+      color: var(--text) !important;
+      border-radius: 8px !important;
+      box-shadow: none !important;
+      font-family: 'DM Sans', sans-serif;
+      transition: border-color .2s;
+    }
+    .input:focus, .select select:focus, .textarea:focus {
+      border-color: var(--gold) !important;
+      box-shadow: 0 0 0 3px rgba(201,168,76,.12) !important;
+      outline: none !important;
+    }
+    .input::placeholder, .textarea::placeholder { color: var(--muted) !important; opacity: .7; }
+
+    .select::after { border-color: var(--gold) !important; }
+    .select select option { background: var(--panel); }
+
+    .button.is-gold {
+      background: linear-gradient(135deg, var(--gold) 0%, var(--gold-lt) 100%);
+      color: #0b0d14;
+      font-weight: 600;
+      border: none;
+      border-radius: 8px;
+      letter-spacing: .04em;
+      transition: opacity .2s, transform .1s;
+    }
+    .button.is-gold:hover { opacity: .9; transform: translateY(-1px); color: #0b0d14; }
+    .button.is-gold:active { transform: translateY(0); }
+
+    .button.is-outline-gold {
+      background: transparent;
+      border: 1px solid var(--gold-dk);
+      color: var(--gold);
+      border-radius: 8px;
+      font-weight: 500;
+      transition: background .2s;
+    }
+    .button.is-outline-gold:hover { background: rgba(201,168,76,.1); color: var(--gold); }
+
+    .button.is-ghost-danger {
+      background: transparent;
+      border: 1px solid rgba(224,82,82,.4);
+      color: var(--danger);
+      border-radius: 8px;
+      font-weight: 500;
+    }
+    .button.is-ghost-danger:hover { background: rgba(224,82,82,.1); color: var(--danger); }
+
+    /* ═══════════════════════════════════════════
+       APP SHELL
+    ═══════════════════════════════════════════ */
+    #screen-app {
+      min-height: 100vh;
+      flex-direction: column;
+    }
+
+    /* ── TOPBAR ───────────────────────────────── */
+    .topbar {
+      height: 64px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      padding: 0 1.5rem;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      gap: 1rem;
+    }
+
+    .topbar-brand {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--gold);
+      letter-spacing: .06em;
+      flex-shrink: 0;
+    }
+
+    .topbar-spacer { flex: 1; }
+
+    .topbar-actions { display: flex; align-items: center; gap: .75rem; }
+
+    .notif-bell {
+      position: relative;
+      width: 40px; height: 40px;
+      display: flex; align-items: center; justify-content: center;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 50%;
+      cursor: pointer;
+      color: var(--muted);
+      transition: color .2s, border-color .2s;
+    }
+    .notif-bell:hover { color: var(--gold); border-color: var(--gold-dk); }
+
+    .notif-badge {
+      position: absolute;
+      top: 4px; right: 4px;
+      width: 8px; height: 8px;
+      background: var(--gold);
+      border-radius: 50%;
+      border: 2px solid var(--surface);
+    }
+
+    .user-pill {
+      display: flex; align-items: center; gap: .6rem;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 50px;
+      padding: .3rem .8rem .3rem .4rem;
+      cursor: pointer;
+    }
+
+    .user-avatar {
+      width: 30px; height: 30px;
+      background: linear-gradient(135deg, var(--gold-dk), var(--gold));
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: .8rem;
+      font-weight: 700;
+      color: #0b0d14;
+    }
+
+    .user-name { font-size: .82rem; color: var(--text); }
+
+    /* ── LAYOUT ───────────────────────────────── */
+    .app-body {
+      display: flex;
+      flex: 1;
+      min-height: calc(100vh - 64px);
+    }
+
+    /* ── SIDEBAR ──────────────────────────────── */
+    .sidebar {
+      width: 220px;
+      flex-shrink: 0;
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      padding: 1.5rem 0;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .nav-section-label {
+      font-size: .65rem;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+      color: var(--muted);
+      padding: 1rem 1.2rem .4rem;
+      opacity: .7;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: .8rem;
+      padding: .7rem 1.2rem;
+      color: var(--muted);
+      cursor: pointer;
+      border-left: 3px solid transparent;
+      transition: all .15s;
+      font-size: .88rem;
+      margin: 1px 0;
+    }
+    .nav-item:hover { color: var(--text); background: rgba(255,255,255,.03); }
+    .nav-item.is-active {
+      color: var(--gold);
+      border-left-color: var(--gold);
+      background: rgba(201,168,76,.07);
+    }
+    .nav-item .nav-icon { width: 18px; text-align: center; font-size: .9rem; }
+
+    .sidebar-bottom {
+      margin-top: auto;
+      padding: 1rem 0;
+      border-top: 1px solid var(--border);
+    }
+
+    /* ── MAIN CONTENT ─────────────────────────── */
+    .main-content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 2rem;
+      background: var(--bg);
+    }
+
+    /* ── TABS (content panels) ────────────────── */
+    .tab-panel { display: none; }
+    .tab-panel.is-active { display: block; animation: fadeUp .3s ease both; }
+
+    /* ── PAGE HEADER ──────────────────────────── */
+    .page-header {
+      margin-bottom: 2rem;
+    }
+    .page-header h2 {
+      font-size: 1.8rem;
+      color: var(--text);
+      margin: 0;
+    }
+    .page-header p {
+      color: var(--muted);
+      margin: .3rem 0 0;
+      font-size: .88rem;
+    }
+
+    /* ── CARD ─────────────────────────────────── */
+    .rx-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.75rem;
+      margin-bottom: 1.5rem;
+    }
+    .rx-card-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.05rem;
+      color: var(--gold);
+      margin-bottom: 1.2rem;
+      display: flex;
+      align-items: center;
+      gap: .6rem;
+    }
+
+    /* ── STAT CARDS ───────────────────────────── */
+    .stat-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1.75rem;
+    }
+    .stat-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.2rem 1.4rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .stat-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--gold-dk), var(--gold));
+    }
+    .stat-label { font-size: .72rem; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+    .stat-value { font-size: 1.8rem; font-family: 'Playfair Display', serif; color: var(--text); margin: .3rem 0 0; }
+    .stat-icon { position: absolute; right: 1rem; top: 50%; transform: translateY(-50%); font-size: 1.6rem; color: var(--gold); opacity: .15; }
+
+    /* ── BOOKING FORM ─────────────────────────── */
+    .form-section-title {
+      font-size: .7rem;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      color: var(--gold-dk);
+      margin: 1.5rem 0 .8rem;
+      padding-bottom: .4rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .form-section-title:first-child { margin-top: 0; }
+
+    .cab-type-group { display: flex; gap: .75rem; flex-wrap: wrap; margin-top: .5rem; }
+    .cab-option {
+      flex: 1; min-width: 110px;
+      background: var(--panel);
+      border: 2px solid var(--border);
+      border-radius: 10px;
+      padding: 1rem;
+      text-align: center;
+      cursor: pointer;
+      transition: all .2s;
+    }
+    .cab-option:hover { border-color: var(--gold-dk); }
+    .cab-option.is-selected {
+      border-color: var(--gold);
+      background: rgba(201,168,76,.08);
+    }
+    .cab-option .cab-icon { font-size: 1.6rem; margin-bottom: .4rem; }
+    .cab-option .cab-name { font-size: .8rem; font-weight: 600; color: var(--text); }
+    .cab-option .cab-price { font-size: .72rem; color: var(--muted); margin-top: .15rem; }
+    .cab-option.is-selected .cab-name { color: var(--gold); }
+
+    /* ── NOTIFICATIONS ────────────────────────── */
+    .notif-list { display: flex; flex-direction: column; gap: .75rem; }
+    .notif-item {
+      display: flex;
+      gap: 1rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1rem 1.2rem;
+      transition: border-color .2s;
+    }
+    .notif-item.is-unread {
+      border-left: 3px solid var(--gold);
+      background: rgba(201,168,76,.04);
+    }
+    .notif-dot {
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      background: var(--gold);
+      flex-shrink: 0;
+      margin-top: .35rem;
+    }
+    .notif-dot.read { background: var(--border); }
+    .notif-body { flex: 1; }
+    .notif-title { font-weight: 600; font-size: .88rem; color: var(--text); }
+    .notif-msg { font-size: .82rem; color: var(--muted); margin-top: .15rem; }
+    .notif-time { font-size: .72rem; color: var(--muted); margin-top: .3rem; opacity: .7; }
+    .notif-icon {
+      width: 38px; height: 38px;
+      border-radius: 50%;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--gold);
+      flex-shrink: 0;
+      font-size: .9rem;
+    }
+
+    /* ── SAVED LOCATIONS ──────────────────────── */
+    .location-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1rem; }
+    .location-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.2rem;
+      position: relative;
+      overflow: hidden;
+      transition: border-color .2s;
+    }
+    .location-card:hover { border-color: var(--gold-dk); }
+    .location-card::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--gold-dk), transparent);
+      opacity: 0;
+      transition: opacity .2s;
+    }
+    .location-card:hover::after { opacity: 1; }
+    .location-type-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: .4rem;
+      font-size: .68rem;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--gold);
+      background: rgba(201,168,76,.1);
+      border: 1px solid rgba(201,168,76,.25);
+      border-radius: 50px;
+      padding: .15rem .6rem;
+      margin-bottom: .7rem;
+    }
+    .location-name { font-weight: 600; font-size: 1rem; color: var(--text); margin-bottom: .3rem; }
+    .location-address { font-size: .82rem; color: var(--muted); line-height: 1.4; }
+    .location-coords { font-size: .72rem; color: var(--muted); opacity: .6; margin-top: .4rem; font-family: 'Courier New', monospace; }
+    .location-actions { display: flex; gap: .5rem; margin-top: 1rem; }
+
+    /* ── ADD LOCATION FORM ────────────────────── */
+    .add-location-card {
+      background: var(--surface);
+      border: 1px dashed var(--border);
+      border-radius: var(--radius);
+      padding: 1.75rem;
+      margin-bottom: 1.5rem;
+    }
+
+    /* ── PAYMENT ──────────────────────────────── */
+    .payment-summary {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+    .payment-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: .5rem 0;
+      border-bottom: 1px solid rgba(255,255,255,.05);
+      font-size: .88rem;
+    }
+    .payment-row:last-child { border-bottom: none; font-weight: 700; font-size: 1rem; color: var(--gold); }
+    .payment-row .label-text { color: var(--muted); }
+    .payment-row .amount { color: var(--text); }
+
+    .payment-methods { display: flex; gap: .75rem; flex-wrap: wrap; margin-bottom: 1.5rem; }
+    .pm-option {
+      flex: 1; min-width: 130px;
+      background: var(--panel);
+      border: 2px solid var(--border);
+      border-radius: 10px;
+      padding: 1rem;
+      text-align: center;
+      cursor: pointer;
+      transition: all .2s;
+    }
+    .pm-option:hover { border-color: var(--gold-dk); }
+    .pm-option.is-selected { border-color: var(--gold); background: rgba(201,168,76,.07); }
+    .pm-option .pm-icon { font-size: 1.5rem; margin-bottom: .4rem; color: var(--muted); }
+    .pm-option.is-selected .pm-icon { color: var(--gold); }
+    .pm-option .pm-name { font-size: .8rem; color: var(--text); font-weight: 600; }
+
+    .card-input-group {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: .75rem;
+    }
+
+    .success-banner {
+      display: none;
+      background: rgba(76,175,130,.12);
+      border: 1px solid rgba(76,175,130,.35);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+      text-align: center;
+      animation: fadeUp .4s ease;
+    }
+    .success-banner .success-icon { font-size: 2.5rem; color: var(--success); margin-bottom: .75rem; }
+    .success-banner h3 { color: var(--success); font-family: 'Playfair Display', serif; margin-bottom: .4rem; }
+    .success-banner p { color: var(--muted); font-size: .88rem; }
+
+    /* ── MODAL ────────────────────────────────── */
+    .rx-modal-bg {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.7);
+      backdrop-filter: blur(4px);
+      z-index: 500;
+      align-items: center;
+      justify-content: center;
+    }
+    .rx-modal-bg.is-open { display: flex; }
+    .rx-modal {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 2rem;
+      width: 100%;
+      max-width: 480px;
+      box-shadow: var(--shadow);
+      animation: fadeUp .25s ease;
+    }
+    .rx-modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.5rem;
+    }
+    .rx-modal-title { font-family: 'Playfair Display', serif; font-size: 1.2rem; color: var(--text); }
+    .rx-modal-close {
+      width: 32px; height: 32px;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+      color: var(--muted);
+      transition: color .2s;
+    }
+    .rx-modal-close:hover { color: var(--danger); }
+
+    /* ── NOTIFICATIONS DROPDOWN ───────────────── */
+    .notif-dropdown {
+      display: none;
+      position: absolute;
+      top: 56px; right: 1.5rem;
+      width: 340px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      z-index: 200;
+      overflow: hidden;
+      animation: fadeUp .2s ease;
+    }
+    .notif-dropdown.is-open { display: block; }
+    .notif-dropdown-header {
+      padding: .9rem 1.2rem;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .notif-dropdown-header span { font-weight: 600; font-size: .88rem; }
+    .notif-dropdown-header a { font-size: .78rem; color: var(--gold); }
+    .notif-dropdown-list { max-height: 360px; overflow-y: auto; }
+    .notif-dd-item {
+      display: flex;
+      gap: .8rem;
+      padding: .9rem 1.2rem;
+      border-bottom: 1px solid rgba(255,255,255,.04);
+      cursor: pointer;
+      transition: background .15s;
+    }
+    .notif-dd-item:hover { background: rgba(255,255,255,.03); }
+    .notif-dd-item.unread { background: rgba(201,168,76,.04); border-left: 2px solid var(--gold); }
+    .notif-dd-icon {
+      width: 32px; height: 32px; border-radius: 50%;
+      background: var(--panel); border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--gold); font-size: .8rem; flex-shrink: 0;
+    }
+    .notif-dd-text .title { font-size: .83rem; font-weight: 600; color: var(--text); }
+    .notif-dd-text .msg { font-size: .78rem; color: var(--muted); margin-top: .1rem; }
+    .notif-dd-text .time { font-size: .7rem; color: var(--muted); opacity: .6; margin-top: .2rem; }
+
+    /* ── STEP INDICATOR ───────────────────────── */
+    .steps {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      margin-bottom: 2rem;
+    }
+    .step {
+      display: flex;
+      align-items: center;
+      gap: .5rem;
+      flex: 1;
+    }
+    .step-circle {
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      border: 2px solid var(--border);
+      background: var(--panel);
+      display: flex; align-items: center; justify-content: center;
+      font-size: .8rem;
+      font-weight: 700;
+      color: var(--muted);
+      flex-shrink: 0;
+      transition: all .3s;
+    }
+    .step.is-active .step-circle { border-color: var(--gold); color: var(--gold); background: rgba(201,168,76,.1); }
+    .step.is-done .step-circle { border-color: var(--success); background: var(--success); color: #fff; }
+    .step-label { font-size: .78rem; color: var(--muted); }
+    .step.is-active .step-label { color: var(--gold); }
+    .step-line { flex: 1; height: 1px; background: var(--border); margin: 0 .5rem; }
+
+    /* ── ANIMATIONS ───────────────────────────── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(14px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── MISC ─────────────────────────────────── */
+    .tag-gold {
+      background: rgba(201,168,76,.12);
+      border: 1px solid rgba(201,168,76,.3);
+      color: var(--gold);
+      font-size: .72rem;
+      padding: .15rem .55rem;
+      border-radius: 50px;
+      letter-spacing: .06em;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 3rem 1rem;
+      color: var(--muted);
+    }
+    .empty-state i { font-size: 2.5rem; opacity: .3; margin-bottom: 1rem; }
+    .empty-state p { font-size: .9rem; }
+
+    .field .help.is-danger { color: var(--danger); }
+
+    /* ── RESPONSIVE SIDEBAR ───────────────────── */
+    @media (max-width: 768px) {
+      .sidebar { width: 60px; }
+      .nav-item span, .nav-section-label, .user-name { display: none; }
+      .main-content { padding: 1.2rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════
+     SCREEN: LOGIN
+═══════════════════════════════════════════ -->
+<div id="screen-login" class="screen is-active">
+  <div class="login-card">
+    <div class="login-logo">
+      <div class="wordmark">RIDEX</div>
+      <div class="tagline">Premium Taxi Service</div>
+    </div>
+    <div class="gold-divider"></div>
+
+    <div class="field">
+      <label class="label">Username</label>
+      <div class="control has-icons-left">
+        <input class="input" type="text" placeholder="your@email.com" id="login-username" />
+        <span class="icon is-left" style="color:var(--muted)"><i class="fas fa-user"></i></span>
+      </div>
+    </div>
+
+    <div class="field" style="margin-top:1rem">
+      <label class="label">Password</label>
+      <div class="control has-icons-left has-icons-right">
+        <input class="input" type="password" placeholder="••••••••" id="login-password" />
+        <span class="icon is-left" style="color:var(--muted)"><i class="fas fa-lock"></i></span>
+        <span class="icon is-right" style="color:var(--muted); cursor:pointer" id="toggle-pw">
+          <i class="fas fa-eye"></i>
+        </span>
+      </div>
+    </div>
+
+    <div id="login-error" style="display:none; color:var(--danger); font-size:.82rem; margin:.5rem 0; display:none">
+      <i class="fas fa-exclamation-circle"></i> Invalid credentials. Try <strong>admin / ridex123</strong>
+    </div>
+
+    <div style="display:flex; justify-content:flex-end; margin:.4rem 0 1.2rem">
+      <a style="font-size:.8rem; color:var(--gold)">Forgot password?</a>
+    </div>
+
+    <button class="button is-gold is-fullwidth" style="height:46px; font-size:.95rem" id="btn-login">
+      <span class="icon"><i class="fas fa-arrow-right-to-bracket"></i></span>
+      <span>Sign In</span>
+    </button>
+
+    <p style="text-align:center; margin-top:1.2rem; font-size:.8rem; color:var(--muted)">
+      Demo credentials: <strong style="color:var(--text)">admin</strong> / <strong style="color:var(--text)">ridex123</strong>
+    </p>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════
+     SCREEN: APP
+═══════════════════════════════════════════ -->
+<div id="screen-app" class="screen" style="flex-direction:column">
+
+  <!-- TOPBAR -->
+  <nav class="topbar">
+    <div class="topbar-brand">RIDEX</div>
+    <div class="topbar-spacer"></div>
+    <div class="topbar-actions">
+
+      <!-- Bell -->
+      <div class="notif-bell" id="btn-bell">
+        <i class="fas fa-bell"></i>
+        <div class="notif-badge" id="notif-badge"></div>
+      </div>
+
+      <!-- Notification Dropdown -->
+      <div class="notif-dropdown" id="notif-dropdown">
+        <div class="notif-dropdown-header">
+          <span>Notifications</span>
+          <a>Mark all read</a>
+        </div>
+        <div class="notif-dropdown-list" id="notif-dropdown-list">
+          <!-- Populated via HTML below as static mock -->
+          <div class="notif-dd-item unread">
+            <div class="notif-dd-icon"><i class="fas fa-car"></i></div>
+            <div class="notif-dd-text">
+              <div class="title">Driver en route</div>
+              <div class="msg">Your driver Alex is 3 mins away</div>
+              <div class="time">2 minutes ago</div>
+            </div>
+          </div>
+          <div class="notif-dd-item unread">
+            <div class="notif-dd-icon"><i class="fas fa-check-circle"></i></div>
+            <div class="notif-dd-text">
+              <div class="title">Booking Confirmed</div>
+              <div class="msg">Ride #RX-2847 confirmed for 13:30</div>
+              <div class="time">18 minutes ago</div>
+            </div>
+          </div>
+          <div class="notif-dd-item">
+            <div class="notif-dd-icon"><i class="fas fa-star"></i></div>
+            <div class="notif-dd-text">
+              <div class="title">Rate your ride</div>
+              <div class="msg">How was your trip with Maria?</div>
+              <div class="time">Yesterday</div>
+            </div>
+          </div>
+          <div class="notif-dd-item">
+            <div class="notif-dd-icon"><i class="fas fa-tag"></i></div>
+            <div class="notif-dd-text">
+              <div class="title">Weekend promo</div>
+              <div class="msg">Get 20% off weekend rides this month</div>
+              <div class="time">2 days ago</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- User Pill -->
+      <div class="user-pill">
+        <div class="user-avatar" id="user-avatar-text">A</div>
+        <span class="user-name" id="user-display-name">Admin</span>
+      </div>
+
+      <!-- Logout -->
+      <button class="button is-outline-gold is-small" id="btn-logout">
+        <span class="icon"><i class="fas fa-right-from-bracket"></i></span>
+        <span>Logout</span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- APP BODY -->
+  <div class="app-body">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div class="nav-section-label">Menu</div>
+
+      <div class="nav-item is-active" data-tab="dashboard">
+        <span class="nav-icon"><i class="fas fa-gauge-high"></i></span>
+        <span>Dashboard</span>
+      </div>
+      <div class="nav-item" data-tab="book">
+        <span class="nav-icon"><i class="fas fa-car-side"></i></span>
+        <span>Book a Ride</span>
+      </div>
+      <div class="nav-item" data-tab="locations">
+        <span class="nav-icon"><i class="fas fa-map-pin"></i></span>
+        <span>Saved Locations</span>
+      </div>
+      <div class="nav-item" data-tab="payment">
+        <span class="nav-icon"><i class="fas fa-credit-card"></i></span>
+        <span>Payment</span>
+      </div>
+      <div class="nav-item" data-tab="notifications">
+        <span class="nav-icon"><i class="fas fa-bell"></i></span>
+        <span>Notifications</span>
+      </div>
+
+      <div class="sidebar-bottom">
+        <div class="nav-item" data-tab="settings">
+          <span class="nav-icon"><i class="fas fa-gear"></i></span>
+          <span>Settings</span>
+        </div>
+      </div>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="main-content">
+
+      <!-- ── TAB: DASHBOARD ───────────────────── -->
+      <div class="tab-panel is-active" id="tab-dashboard">
+        <div class="page-header">
+          <h2>Good afternoon, Admin</h2>
+          <p>Here's your ride overview for today.</p>
+        </div>
+
+        <div class="stat-grid">
+          <div class="stat-card">
+            <div class="stat-label">Total Rides</div>
+            <div class="stat-value">47</div>
+            <div class="stat-icon"><i class="fas fa-route"></i></div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">This Month</div>
+            <div class="stat-value">12</div>
+            <div class="stat-icon"><i class="fas fa-calendar"></i></div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Total Spent</div>
+            <div class="stat-value">€384</div>
+            <div class="stat-icon"><i class="fas fa-euro-sign"></i></div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Saved Spots</div>
+            <div class="stat-value">3</div>
+            <div class="stat-icon"><i class="fas fa-map-pin"></i></div>
+          </div>
+        </div>
+
+        <!-- Recent rides -->
+        <div class="rx-card">
+          <div class="rx-card-title"><i class="fas fa-clock-rotate-left"></i> Recent Rides</div>
+          <table class="table is-fullwidth" style="background:transparent; color:var(--text)">
+            <thead>
+              <tr style="border-bottom:1px solid var(--border)">
+                <th style="color:var(--muted); font-size:.75rem; letter-spacing:.1em; text-transform:uppercase; border:none; padding:.6rem .75rem">Ride ID</th>
+                <th style="color:var(--muted); font-size:.75rem; letter-spacing:.1em; text-transform:uppercase; border:none; padding:.6rem .75rem">Date</th>
+                <th style="color:var(--muted); font-size:.75rem; letter-spacing:.1em; text-transform:uppercase; border:none; padding:.6rem .75rem">Route</th>
+                <th style="color:var(--muted); font-size:.75rem; letter-spacing:.1em; text-transform:uppercase; border:none; padding:.6rem .75rem">Type</th>
+                <th style="color:var(--muted); font-size:.75rem; letter-spacing:.1em; text-transform:uppercase; border:none; padding:.6rem .75rem">Amount</th>
+                <th style="color:var(--muted); font-size:.75rem; letter-spacing:.1em; text-transform:uppercase; border:none; padding:.6rem .75rem">Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr style="border-bottom:1px solid rgba(255,255,255,.04)">
+                <td style="border:none; padding:.7rem .75rem; font-family:monospace; font-size:.82rem; color:var(--gold)">#RX-2847</td>
+                <td style="border:none; padding:.7rem .75rem; color:var(--muted); font-size:.85rem">27/05/2026</td>
+                <td style="border:none; padding:.7rem .75rem; font-size:.85rem">St Paul's Bay → Valletta</td>
+                <td style="border:none; padding:.7rem .75rem"><span class="tag-gold">Economic</span></td>
+                <td style="border:none; padding:.7rem .75rem; font-weight:600">€14.50</td>
+                <td style="border:none; padding:.7rem .75rem"><span style="color:var(--success); font-size:.8rem"><i class="fas fa-circle" style="font-size:.5rem; vertical-align:middle"></i> Completed</span></td>
+              </tr>
+              <tr style="border-bottom:1px solid rgba(255,255,255,.04)">
+                <td style="border:none; padding:.7rem .75rem; font-family:monospace; font-size:.82rem; color:var(--gold)">#RX-2831</td>
+                <td style="border:none; padding:.7rem .75rem; color:var(--muted); font-size:.85rem">25/05/2026</td>
+                <td style="border:none; padding:.7rem .75rem; font-size:.85rem">Airport → Sliema</td>
+                <td style="border:none; padding:.7rem .75rem"><span class="tag-gold">Business</span></td>
+                <td style="border:none; padding:.7rem .75rem; font-weight:600">€32.00</td>
+                <td style="border:none; padding:.7rem .75rem"><span style="color:var(--success); font-size:.8rem"><i class="fas fa-circle" style="font-size:.5rem; vertical-align:middle"></i> Completed</span></td>
+              </tr>
+              <tr>
+                <td style="border:none; padding:.7rem .75rem; font-family:monospace; font-size:.82rem; color:var(--gold)">#RX-2819</td>
+                <td style="border:none; padding:.7rem .75rem; color:var(--muted); font-size:.85rem">22/05/2026</td>
+                <td style="border:none; padding:.7rem .75rem; font-size:.85rem">Valletta → Mdina</td>
+                <td style="border:none; padding:.7rem .75rem"><span class="tag-gold">Van</span></td>
+                <td style="border:none; padding:.7rem .75rem; font-weight:600">€22.80</td>
+                <td style="border:none; padding:.7rem .75rem"><span style="color:var(--success); font-size:.8rem"><i class="fas fa-circle" style="font-size:.5rem; vertical-align:middle"></i> Completed</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="rx-card" style="background:linear-gradient(135deg, rgba(201,168,76,.08) 0%, transparent 100%); border-color:rgba(201,168,76,.2)">
+          <div style="display:flex; align-items:center; gap:1rem">
+            <div style="font-size:2rem; color:var(--gold)"><i class="fas fa-car-side"></i></div>
+            <div>
+              <div style="font-family:'Playfair Display',serif; font-size:1.1rem; color:var(--text)">Ready for your next ride?</div>
+              <div style="color:var(--muted); font-size:.85rem; margin-top:.2rem">Book a taxi in under 60 seconds</div>
+            </div>
+            <button class="button is-gold" style="margin-left:auto" data-tab="book">
+              Book Now <i class="fas fa-arrow-right" style="margin-left:.4rem"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── TAB: BOOK A RIDE ─────────────────── -->
+      <div class="tab-panel" id="tab-book">
+        <div class="page-header">
+          <h2>Book a Ride</h2>
+          <p>Fill in the details below to reserve your taxi.</p>
+        </div>
+
+        <!-- Steps -->
+        <div class="steps">
+          <div class="step is-active" id="step-1">
+            <div class="step-circle">1</div>
+            <div class="step-label">Journey</div>
+          </div>
+          <div class="step-line"></div>
+          <div class="step" id="step-2">
+            <div class="step-circle">2</div>
+            <div class="step-label">Vehicle</div>
+          </div>
+          <div class="step-line"></div>
+          <div class="step" id="step-3">
+            <div class="step-circle">3</div>
+            <div class="step-label">Confirm</div>
+          </div>
+        </div>
+
+        <!-- STEP 1: Journey -->
+        <div id="book-step-1">
+          <div class="rx-card">
+            <div class="form-section-title">Pickup &amp; Drop-off</div>
+
+            <div class="field">
+              <label class="label">Start Location (lat, lng)</label>
+              <div class="control has-icons-left">
+                <input class="input" type="text" id="f-start" placeholder="35.865655760261035, 14.519315168765294" value="35.865655760261035, 14.519315168765294" />
+                <span class="icon is-left" style="color:var(--gold)"><i class="fas fa-location-dot"></i></span>
+              </div>
+            </div>
+
+            <div class="field" style="margin-top:1rem">
+              <label class="label">End Location (lat, lng)</label>
+              <div class="control has-icons-left">
+                <input class="input" type="text" id="f-end" placeholder="35.9211412732, 14.473955861070904" value="35.9211412732, 14.473955861070904" />
+                <span class="icon is-left" style="color:var(--muted)"><i class="fas fa-flag-checkered"></i></span>
+              </div>
+            </div>
+
+            <div class="columns" style="margin-top:1rem">
+              <div class="column">
+                <div class="field">
+                  <label class="label">Date</label>
+                  <div class="control">
+                    <input class="input" type="date" id="f-date" value="2026-05-27" />
+                  </div>
+                </div>
+              </div>
+              <div class="column">
+                <div class="field">
+                  <label class="label">Time</label>
+                  <div class="control">
+                    <input class="input" type="time" id="f-time" value="13:30" />
+                  </div>
+                </div>
+              </div>
+              <div class="column">
+                <div class="field">
+                  <label class="label">Passengers</label>
+                  <div class="control">
+                    <div class="select is-fullwidth">
+                      <select id="f-passengers">
+                        <option>1</option>
+                        <option selected>2</option>
+                        <option>3</option>
+                        <option>4</option>
+                        <option>5</option>
+                        <option>6</option>
+                        <option>7</option>
+                        <option>8</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="field" style="margin-top:.5rem">
+              <label class="label">Email</label>
+              <div class="control has-icons-left">
+                <input class="input" type="email" id="f-email" placeholder="your@email.com" value="nbsexy4@gmail.com" />
+                <span class="icon is-left" style="color:var(--muted)"><i class="fas fa-envelope"></i></span>
+              </div>
+            </div>
+          </div>
+
+          <div style="display:flex; justify-content:flex-end">
+            <button class="button is-gold" id="btn-step1-next">
+              Next: Choose Vehicle <i class="fas fa-arrow-right" style="margin-left:.5rem"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- STEP 2: Vehicle -->
+        <div id="book-step-2" style="display:none">
+          <div class="rx-card">
+            <div class="form-section-title">Select Cab Type</div>
+
+            <div class="cab-type-group">
+              <div class="cab-option is-selected" data-cab="Economic">
+                <div class="cab-icon">🚗</div>
+                <div class="cab-name">Economic</div>
+                <div class="cab-price">From €8</div>
+              </div>
+              <div class="cab-option" data-cab="Business">
+                <div class="cab-icon">🚘</div>
+                <div class="cab-name">Business</div>
+                <div class="cab-price">From €18</div>
+              </div>
+              <div class="cab-option" data-cab="Van">
+                <div class="cab-icon">🚐</div>
+                <div class="cab-name">Van</div>
+                <div class="cab-price">From €22</div>
+              </div>
+              <div class="cab-option" data-cab="Premium">
+                <div class="cab-icon">🏎️</div>
+                <div class="cab-name">Premium</div>
+                <div class="cab-price">From €35</div>
+              </div>
+            </div>
+
+            <div style="margin-top:1.5rem; padding:1rem; background:var(--panel); border-radius:8px; border:1px solid var(--border)">
+              <div style="font-size:.8rem; color:var(--muted); margin-bottom:.4rem">Estimated fare for selected route:</div>
+              <div style="font-family:'Playfair Display',serif; font-size:1.6rem; color:var(--gold)">€14.50 <span style="font-size:.9rem; color:var(--muted); font-family:'DM Sans',sans-serif; font-weight:400">– €18.00</span></div>
+              <div style="font-size:.78rem; color:var(--muted); margin-top:.3rem"><i class="fas fa-info-circle"></i> Final price may vary based on traffic</div>
+            </div>
+          </div>
+
+          <div style="display:flex; justify-content:space-between">
+            <button class="button is-outline-gold" id="btn-step2-back">
+              <i class="fas fa-arrow-left" style="margin-right:.5rem"></i> Back
+            </button>
+            <button class="button is-gold" id="btn-step2-next">
+              Review Booking <i class="fas fa-arrow-right" style="margin-left:.5rem"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- STEP 3: Confirm -->
+        <div id="book-step-3" style="display:none">
+          <div class="rx-card">
+            <div class="form-section-title">Booking Summary</div>
+            <div id="booking-summary" style="display:grid; gap:.6rem">
+              <!-- Populated by JS... shown as static for pure HTML/CSS -->
+              <div style="display:flex; justify-content:space-between; padding:.5rem 0; border-bottom:1px solid rgba(255,255,255,.05); font-size:.88rem">
+                <span style="color:var(--muted)">From</span>
+                <span id="sum-start" style="text-align:right; max-width:240px; font-size:.82rem">35.865655760261035, 14.519315168765294</span>
+              </div>
+              <div style="display:flex; justify-content:space-between; padding:.5rem 0; border-bottom:1px solid rgba(255,255,255,.05); font-size:.88rem">
+                <span style="color:var(--muted)">To</span>
+                <span id="sum-end" style="text-align:right; max-width:240px; font-size:.82rem">35.9211412732, 14.473955861070904</span>
+              </div>
+              <div style="display:flex; justify-content:space-between; padding:.5rem 0; border-bottom:1px solid rgba(255,255,255,.05); font-size:.88rem">
+                <span style="color:var(--muted)">Date &amp; Time</span>
+                <span id="sum-datetime">27/05/2026 at 13:30</span>
+              </div>
+              <div style="display:flex; justify-content:space-between; padding:.5rem 0; border-bottom:1px solid rgba(255,255,255,.05); font-size:.88rem">
+                <span style="color:var(--muted)">Passengers</span>
+                <span id="sum-pax">2</span>
+              </div>
+              <div style="display:flex; justify-content:space-between; padding:.5rem 0; border-bottom:1px solid rgba(255,255,255,.05); font-size:.88rem">
+                <span style="color:var(--muted)">Cab Type</span>
+                <span id="sum-cab" class="tag-gold">Economic</span>
+              </div>
+              <div style="display:flex; justify-content:space-between; padding:.5rem 0; border-bottom:1px solid rgba(255,255,255,.05); font-size:.88rem">
+                <span style="color:var(--muted)">Email</span>
+                <span id="sum-email">nbsexy4@gmail.com</span>
+              </div>
+              <div style="display:flex; justify-content:space-between; padding:.7rem 0; font-size:1rem; font-weight:700; color:var(--gold)">
+                <span>Estimated Total</span>
+                <span>€14.50</span>
+              </div>
+            </div>
+          </div>
+
+          <div id="booking-success" style="display:none; background:rgba(76,175,130,.1); border:1px solid rgba(76,175,130,.3); border-radius:var(--radius); padding:1.5rem; text-align:center; margin-bottom:1.5rem">
+            <div style="font-size:2rem; color:var(--success); margin-bottom:.5rem"><i class="fas fa-circle-check"></i></div>
+            <div style="font-family:'Playfair Display',serif; font-size:1.2rem; color:var(--success)">Booking Confirmed!</div>
+            <div style="color:var(--muted); font-size:.85rem; margin-top:.4rem">Your ride ID is <strong style="color:var(--gold)">#RX-2848</strong>. A confirmation has been sent to your email.</div>
+          </div>
+
+          <div style="display:flex; justify-content:space-between" id="step3-buttons">
+            <button class="button is-outline-gold" id="btn-step3-back">
+              <i class="fas fa-arrow-left" style="margin-right:.5rem"></i> Back
+            </button>
+            <button class="button is-gold" id="btn-confirm-booking">
+              <i class="fas fa-check" style="margin-right:.5rem"></i> Confirm Booking
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── TAB: SAVED LOCATIONS ─────────────── -->
+      <div class="tab-panel" id="tab-locations">
+        <div class="page-header">
+          <h2>Saved Locations</h2>
+          <p>Manage your frequently used addresses for faster booking.</p>
+        </div>
+
+        <!-- Add new location card -->
+        <div class="add-location-card">
+          <div class="rx-card-title" style="font-family:'Playfair Display',serif; font-size:1rem; color:var(--gold); margin-bottom:1rem">
+            <i class="fas fa-plus-circle"></i> Add New Location
+          </div>
+          <div class="columns">
+            <div class="column">
+              <div class="field">
+                <label class="label">Location Name</label>
+                <input class="input" type="text" id="new-loc-name" placeholder="e.g. Home, Office, Airport" />
+              </div>
+            </div>
+            <div class="column">
+              <div class="field">
+                <label class="label">Type</label>
+                <div class="select is-fullwidth">
+                  <select id="new-loc-type">
+                    <option>Home</option>
+                    <option>Work</option>
+                    <option>Airport</option>
+                    <option>Other</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="field">
+            <label class="label">Full Address</label>
+            <input class="input" type="text" id="new-loc-address" placeholder="Street name, City, Malta" />
+          </div>
+          <div class="field">
+            <label class="label">Coordinates (lat, lng)</label>
+            <input class="input" type="text" id="new-loc-coords" placeholder="35.8765, 14.4123" />
+          </div>
+          <div style="display:flex; justify-content:flex-end; margin-top:.75rem">
+            <button class="button is-gold" id="btn-add-location">
+              <i class="fas fa-plus" style="margin-right:.5rem"></i> Save Location
+            </button>
+          </div>
+        </div>
+
+        <!-- Existing saved locations -->
+        <div class="location-grid" id="locations-grid">
+
+          <div class="location-card">
+            <div class="location-type-badge"><i class="fas fa-house"></i> Home</div>
+            <div class="location-name">Home</div>
+            <div class="location-address">12 Triq San Pawl, St Paul's Bay, Malta</div>
+            <div class="location-coords">35.865655, 14.519315</div>
+            <div class="location-actions">
+              <button class="button is-outline-gold is-small btn-edit-loc">
+                <span class="icon"><i class="fas fa-pen"></i></span>
+                <span>Edit</span>
+              </button>
+              <button class="button is-ghost-danger is-small btn-delete-loc">
+                <span class="icon"><i class="fas fa-trash"></i></span>
+                <span>Delete</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="location-card">
+            <div class="location-type-badge"><i class="fas fa-briefcase"></i> Work</div>
+            <div class="location-name">Office</div>
+            <div class="location-address">Triq il-Merkanti, Valletta VLT 1117, Malta</div>
+            <div class="location-coords">35.899562, 14.513901</div>
+            <div class="location-actions">
+              <button class="button is-outline-gold is-small btn-edit-loc">
+                <span class="icon"><i class="fas fa-pen"></i></span>
+                <span>Edit</span>
+              </button>
+              <button class="button is-ghost-danger is-small btn-delete-loc">
+                <span class="icon"><i class="fas fa-trash"></i></span>
+                <span>Delete</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="location-card">
+            <div class="location-type-badge"><i class="fas fa-plane"></i> Airport</div>
+            <div class="location-name">MIA — Malta International</div>
+            <div class="location-address">Malta International Airport, Luqa LQA 4000</div>
+            <div class="location-coords">35.857376, 14.477508</div>
+            <div class="location-actions">
+              <button class="button is-outline-gold is-small btn-edit-loc">
+                <span class="icon"><i class="fas fa-pen"></i></span>
+                <span>Edit</span>
+              </button>
+              <button class="button is-ghost-danger is-small btn-delete-loc">
+                <span class="icon"><i class="fas fa-trash"></i></span>
+                <span>Delete</span>
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- ── TAB: PAYMENT ─────────────────────── -->
+      <div class="tab-panel" id="tab-payment">
+        <div class="page-header">
+          <h2>Payment</h2>
+          <p>Manage your payment methods and complete transactions.</p>
+        </div>
+
+        <!-- Mock payment gateway -->
+        <div class="rx-card">
+          <div class="rx-card-title"><i class="fas fa-receipt"></i> Order Summary</div>
+          <div class="payment-summary">
+            <div class="payment-row">
+              <span class="label-text">Ride (#RX-2848)</span>
+              <span class="amount">€14.50</span>
+            </div>
+            <div class="payment-row">
+              <span class="label-text">Service fee</span>
+              <span class="amount">€0.80</span>
+            </div>
+            <div class="payment-row">
+              <span class="label-text">Promo discount</span>
+              <span class="amount" style="color:var(--success)">–€2.00</span>
+            </div>
+            <div class="payment-row">
+              <span class="label-text" style="color:var(--text); font-weight:700">Total</span>
+              <span class="amount">€13.30</span>
+            </div>
+          </div>
+
+          <div class="rx-card-title" style="margin-top:1.5rem"><i class="fas fa-wallet"></i> Payment Method</div>
+          <div class="payment-methods">
+            <div class="pm-option is-selected" data-pm="card">
+              <div class="pm-icon"><i class="fas fa-credit-card"></i></div>
+              <div class="pm-name">Card</div>
+            </div>
+            <div class="pm-option" data-pm="paypal">
+              <div class="pm-icon"><i class="fab fa-paypal"></i></div>
+              <div class="pm-name">PayPal</div>
+            </div>
+            <div class="pm-option" data-pm="apple">
+              <div class="pm-icon"><i class="fab fa-apple-pay"></i></div>
+              <div class="pm-name">Apple Pay</div>
+            </div>
+            <div class="pm-option" data-pm="google">
+              <div class="pm-icon"><i class="fab fa-google-pay"></i></div>
+              <div class="pm-name">Google Pay</div>
+            </div>
+          </div>
+
+          <!-- Card form -->
+          <div id="card-form">
+            <div class="field">
+              <label class="label">Cardholder Name</label>
+              <input class="input" type="text" placeholder="John Smith" />
+            </div>
+            <div class="field" style="margin-top:.9rem">
+              <label class="label">Card Number</label>
+              <div class="control has-icons-left">
+                <input class="input" type="text" placeholder="4242 4242 4242 4242" maxlength="19" />
+                <span class="icon is-left" style="color:var(--muted)"><i class="fas fa-credit-card"></i></span>
+              </div>
+            </div>
+            <div class="card-input-group" style="margin-top:.9rem">
+              <div class="field">
+                <label class="label">Expiry</label>
+                <input class="input" type="text" placeholder="MM / YY" maxlength="7" />
+              </div>
+              <div class="field">
+                <label class="label">CVV</label>
+                <input class="input" type="text" placeholder="•••" maxlength="4" />
+              </div>
+            </div>
+            <div class="field" style="margin-top:.9rem">
+              <label class="label">Billing Email</label>
+              <input class="input" type="email" placeholder="your@email.com" value="nbsexy4@gmail.com" />
+            </div>
+          </div>
+
+          <!-- Other payment methods placeholder -->
+          <div id="alt-pay-msg" style="display:none; padding:2rem; text-align:center; color:var(--muted); font-size:.9rem">
+            <i class="fas fa-external-link-alt" style="font-size:1.5rem; margin-bottom:.7rem; display:block; opacity:.5"></i>
+            You will be redirected to complete payment securely.
+          </div>
+
+          <!-- Success banner -->
+          <div class="success-banner" id="payment-success">
+            <div class="success-icon"><i class="fas fa-circle-check"></i></div>
+            <h3>Payment Successful!</h3>
+            <p>€13.30 charged. Your ride #RX-2848 is confirmed.</p>
+          </div>
+
+          <div style="margin-top:1.5rem" id="pay-btn-wrap">
+            <button class="button is-gold is-fullwidth" style="height:50px; font-size:.95rem; letter-spacing:.04em" id="btn-pay">
+              <i class="fas fa-lock" style="margin-right:.6rem"></i> Pay €13.30 Securely
+            </button>
+            <div style="text-align:center; margin-top:.75rem; font-size:.75rem; color:var(--muted)">
+              <i class="fas fa-shield-halved"></i> 256-bit SSL encryption &nbsp;·&nbsp; PCI DSS compliant
+            </div>
+          </div>
+        </div>
+
+        <!-- Saved cards -->
+        <div class="rx-card">
+          <div class="rx-card-title"><i class="fas fa-vault"></i> Saved Cards</div>
+          <div style="display:flex; flex-direction:column; gap:.75rem">
+            <div style="display:flex; align-items:center; gap:1rem; padding:.9rem 1rem; background:var(--panel); border:1px solid var(--border); border-radius:8px">
+              <i class="fab fa-cc-visa" style="font-size:1.8rem; color:#1a73e8"></i>
+              <div style="flex:1">
+                <div style="font-weight:600; font-size:.88rem">Visa •••• 4242</div>
+                <div style="font-size:.78rem; color:var(--muted)">Expires 08/28</div>
+              </div>
+              <span style="font-size:.72rem; color:var(--success)">Default</span>
+              <button class="button is-ghost-danger is-small"><i class="fas fa-trash"></i></button>
+            </div>
+            <div style="display:flex; align-items:center; gap:1rem; padding:.9rem 1rem; background:var(--panel); border:1px solid var(--border); border-radius:8px">
+              <i class="fab fa-cc-mastercard" style="font-size:1.8rem; color:#eb001b"></i>
+              <div style="flex:1">
+                <div style="font-weight:600; font-size:.88rem">Mastercard •••• 8831</div>
+                <div style="font-size:.78rem; color:var(--muted)">Expires 02/27</div>
+              </div>
+              <button class="button is-ghost-danger is-small"><i class="fas fa-trash"></i></button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── TAB: NOTIFICATIONS ────────────────── -->
+      <div class="tab-panel" id="tab-notifications">
+        <div class="page-header">
+          <h2>Notifications</h2>
+          <p>Stay updated on your rides and account activity.</p>
+        </div>
+
+        <div style="display:flex; justify-content:flex-end; margin-bottom:1rem">
+          <button class="button is-outline-gold is-small">
+            <i class="fas fa-check-double" style="margin-right:.4rem"></i> Mark all as read
+          </button>
+        </div>
+
+        <div class="notif-list">
+          <div class="notif-item is-unread">
+            <div class="notif-icon"><i class="fas fa-car"></i></div>
+            <div class="notif-body">
+              <div class="notif-title">Driver en route</div>
+              <div class="notif-msg">Your driver Alex is 3 minutes away. Vehicle: White Toyota Corolla — LBM 924.</div>
+              <div class="notif-time"><i class="fas fa-clock" style="font-size:.65rem"></i> 2 minutes ago</div>
+            </div>
+            <div class="notif-dot"></div>
+          </div>
+
+          <div class="notif-item is-unread">
+            <div class="notif-icon"><i class="fas fa-check-circle"></i></div>
+            <div class="notif-body">
+              <div class="notif-title">Booking Confirmed — #RX-2847</div>
+              <div class="notif-msg">Your ride from St Paul's Bay to Valletta is confirmed for 27/05/2026 at 13:30.</div>
+              <div class="notif-time"><i class="fas fa-clock" style="font-size:.65rem"></i> 18 minutes ago</div>
+            </div>
+            <div class="notif-dot"></div>
+          </div>
+
+          <div class="notif-item">
+            <div class="notif-icon"><i class="fas fa-star"></i></div>
+            <div class="notif-body">
+              <div class="notif-title">Rate your recent ride</div>
+              <div class="notif-msg">How was your trip with Maria on 25/05/2026? Your feedback helps us improve.</div>
+              <div class="notif-time"><i class="fas fa-clock" style="font-size:.65rem"></i> Yesterday, 16:42</div>
+            </div>
+            <div class="notif-dot read"></div>
+          </div>
+
+          <div class="notif-item">
+            <div class="notif-icon"><i class="fas fa-tag"></i></div>
+            <div class="notif-body">
+              <div class="notif-title">Weekend Promo — 20% Off</div>
+              <div class="notif-msg">Book any ride this weekend and get 20% off. Use code RIDEX20 at checkout.</div>
+              <div class="notif-time"><i class="fas fa-clock" style="font-size:.65rem"></i> 2 days ago</div>
+            </div>
+            <div class="notif-dot read"></div>
+          </div>
+
+          <div class="notif-item">
+            <div class="notif-icon"><i class="fas fa-credit-card"></i></div>
+            <div class="notif-body">
+              <div class="notif-title">Payment Received</div>
+              <div class="notif-msg">€32.00 was charged for ride #RX-2831 (Airport → Sliema). Business class.</div>
+              <div class="notif-time"><i class="fas fa-clock" style="font-size:.65rem"></i> 25/05/2026, 09:15</div>
+            </div>
+            <div class="notif-dot read"></div>
+          </div>
+
+          <div class="notif-item">
+            <div class="notif-icon"><i class="fas fa-shield-halved"></i></div>
+            <div class="notif-body">
+              <div class="notif-title">New Login Detected</div>
+              <div class="notif-msg">A new login to your account was detected from Malta. If this wasn't you, please contact support.</div>
+              <div class="notif-time"><i class="fas fa-clock" style="font-size:.65rem"></i> 22/05/2026, 08:03</div>
+            </div>
+            <div class="notif-dot read"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── TAB: SETTINGS (stub) ─────────────── -->
+      <div class="tab-panel" id="tab-settings">
+        <div class="page-header">
+          <h2>Settings</h2>
+          <p>Manage your account preferences.</p>
+        </div>
+        <div class="rx-card">
+          <div class="rx-card-title"><i class="fas fa-user-circle"></i> Profile</div>
+          <div class="columns">
+            <div class="column">
+              <div class="field">
+                <label class="label">Full Name</label>
+                <input class="input" type="text" value="Admin User" />
+              </div>
+            </div>
+            <div class="column">
+              <div class="field">
+                <label class="label">Email</label>
+                <input class="input" type="email" value="nbsexy4@gmail.com" />
+              </div>
+            </div>
+          </div>
+          <div class="field">
+            <label class="label">Phone</label>
+            <input class="input" type="tel" value="+356 9999 0000" />
+          </div>
+          <div style="display:flex; justify-content:flex-end; margin-top:1rem">
+            <button class="button is-gold">Save Changes</button>
+          </div>
+        </div>
+        <div class="rx-card">
+          <div class="rx-card-title"><i class="fas fa-lock"></i> Security</div>
+          <div class="field">
+            <label class="label">Current Password</label>
+            <input class="input" type="password" placeholder="••••••••" />
+          </div>
+          <div class="columns">
+            <div class="column">
+              <div class="field">
+                <label class="label">New Password</label>
+                <input class="input" type="password" placeholder="••••••••" />
+              </div>
+            </div>
+            <div class="column">
+              <div class="field">
+                <label class="label">Confirm New Password</label>
+                <input class="input" type="password" placeholder="••••••••" />
+              </div>
+            </div>
+          </div>
+          <div style="display:flex; justify-content:flex-end; margin-top:1rem">
+            <button class="button is-outline-gold">Update Password</button>
+          </div>
+        </div>
+      </div>
+
+    </main><!-- /main-content -->
+  </div><!-- /app-body -->
+</div><!-- /screen-app -->
+
+
+<!-- ═══════════════════════════════════════════
+     EDIT LOCATION MODAL
+═══════════════════════════════════════════ -->
+<div class="rx-modal-bg" id="modal-edit-location">
+  <div class="rx-modal">
+    <div class="rx-modal-header">
+      <div class="rx-modal-title">Edit Location</div>
+      <div class="rx-modal-close" id="modal-edit-close"><i class="fas fa-xmark"></i></div>
+    </div>
+    <div class="field">
+      <label class="label">Location Name</label>
+      <input class="input" type="text" id="edit-loc-name" value="Home" />
+    </div>
+    <div class="field" style="margin-top:.9rem">
+      <label class="label">Type</label>
+      <div class="select is-fullwidth">
+        <select id="edit-loc-type">
+          <option selected>Home</option>
+          <option>Work</option>
+          <option>Airport</option>
+          <option>Other</option>
+        </select>
+      </div>
+    </div>
+    <div class="field" style="margin-top:.9rem">
+      <label class="label">Full Address</label>
+      <input class="input" type="text" id="edit-loc-address" value="12 Triq San Pawl, St Paul's Bay, Malta" />
+    </div>
+    <div class="field" style="margin-top:.9rem">
+      <label class="label">Coordinates (lat, lng)</label>
+      <input class="input" type="text" id="edit-loc-coords" value="35.865655, 14.519315" />
+    </div>
+    <div style="display:flex; gap:.75rem; justify-content:flex-end; margin-top:1.5rem">
+      <button class="button is-outline-gold" id="modal-edit-cancel">Cancel</button>
+      <button class="button is-gold" id="modal-edit-save">
+        <i class="fas fa-save" style="margin-right:.4rem"></i> Save Changes
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     DELETE CONFIRM MODAL
+═══════════════════════════════════════════ -->
+<div class="rx-modal-bg" id="modal-delete-location">
+  <div class="rx-modal" style="max-width:380px; text-align:center">
+    <div style="font-size:2rem; color:var(--danger); margin-bottom:1rem"><i class="fas fa-triangle-exclamation"></i></div>
+    <div class="rx-modal-title" style="margin-bottom:.5rem">Delete Location?</div>
+    <p style="color:var(--muted); font-size:.88rem; margin-bottom:1.5rem">This action cannot be undone. The saved location will be permanently removed.</p>
+    <div style="display:flex; gap:.75rem; justify-content:center">
+      <button class="button is-outline-gold" id="modal-delete-cancel">Cancel</button>
+      <button class="button is-ghost-danger" id="modal-delete-confirm">
+        <i class="fas fa-trash" style="margin-right:.4rem"></i> Delete
+      </button>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════
+  JAVASCRIPT — interactions only
+  (no business logic duplicated)
+══════════════════════════════ -->
+<script>
+  /* ── helpers ── */
+  const $ = id => document.getElementById(id);
+  const show = id => { $(id).style.display = ''; };
+  const hide = id => { $(id).style.display = 'none'; };
+  const qs = sel => document.querySelector(sel);
+  const qsa = sel => [...document.querySelectorAll(sel)];
+
+  /* ── login ── */
+  $('btn-login').addEventListener('click', () => {
+    const u = $('login-username').value.trim();
+    const p = $('login-password').value.trim();
+    if (u === 'admin' && p === 'ridex123') {
+      $('screen-login').classList.remove('is-active');
+      $('screen-app').classList.add('is-active');
+    } else {
+      $('login-error').style.display = 'block';
+    }
+  });
+  $('login-password').addEventListener('keydown', e => { if (e.key === 'Enter') $('btn-login').click(); });
+  $('toggle-pw').addEventListener('click', () => {
+    const inp = $('login-password');
+    const ico = $('toggle-pw').querySelector('i');
+    if (inp.type === 'password') { inp.type = 'text'; ico.className = 'fas fa-eye-slash'; }
+    else { inp.type = 'password'; ico.className = 'fas fa-eye'; }
+  });
+
+  /* ── logout ── */
+  $('btn-logout').addEventListener('click', () => {
+    $('screen-app').classList.remove('is-active');
+    $('screen-login').classList.add('is-active');
+    $('login-username').value = '';
+    $('login-password').value = '';
+    $('login-error').style.display = 'none';
+  });
+
+  /* ── sidebar navigation ── */
+  function activateTab(tabName) {
+    qsa('.nav-item').forEach(n => n.classList.toggle('is-active', n.dataset.tab === tabName));
+    qsa('.tab-panel').forEach(p => p.classList.toggle('is-active', p.id === 'tab-' + tabName));
+  }
+  qsa('.nav-item').forEach(item => {
+    item.addEventListener('click', () => activateTab(item.dataset.tab));
+  });
+  // Dashboard quick-book button
+  qs('[data-tab="book"]').addEventListener('click', () => activateTab('book'));
+
+  /* ── notification dropdown ── */
+  $('btn-bell').addEventListener('click', e => {
+    e.stopPropagation();
+    $('notif-dropdown').classList.toggle('is-open');
+  });
+  document.addEventListener('click', () => $('notif-dropdown').classList.remove('is-open'));
+
+  /* ── booking steps ── */
+  let currentCab = 'Economic';
+
+  // Step 1 → 2
+  $('btn-step1-next').addEventListener('click', () => {
+    hide('book-step-1');
+    show('book-step-2');
+    $('step-1').classList.remove('is-active');
+    $('step-1').classList.add('is-done');
+    $('step-1').querySelector('.step-circle').innerHTML = '<i class="fas fa-check"></i>';
+    $('step-2').classList.add('is-active');
+  });
+
+  // Step 2 ← back
+  $('btn-step2-back').addEventListener('click', () => {
+    show('book-step-1');
+    hide('book-step-2');
+    $('step-2').classList.remove('is-active');
+    $('step-1').classList.remove('is-done');
+    $('step-1').classList.add('is-active');
+    $('step-1').querySelector('.step-circle').textContent = '1';
+  });
+
+  // Step 2 → 3
+  $('btn-step2-next').addEventListener('click', () => {
+    hide('book-step-2');
+    show('book-step-3');
+    $('step-2').classList.remove('is-active');
+    $('step-2').classList.add('is-done');
+    $('step-2').querySelector('.step-circle').innerHTML = '<i class="fas fa-check"></i>';
+    $('step-3').classList.add('is-active');
+    // populate summary
+    $('sum-start').textContent = $('f-start').value || '—';
+    $('sum-end').textContent = $('f-end').value || '—';
+    $('sum-datetime').textContent = $('f-date').value + ' at ' + $('f-time').value;
+    $('sum-pax').textContent = $('f-passengers').value;
+    $('sum-cab').textContent = currentCab;
+    $('sum-email').textContent = $('f-email').value;
+  });
+
+  // Step 3 ← back
+  $('btn-step3-back').addEventListener('click', () => {
+    show('book-step-2');
+    hide('book-step-3');
+    $('step-3').classList.remove('is-active');
+    $('step-2').classList.remove('is-done');
+    $('step-2').classList.add('is-active');
+    $('step-2').querySelector('.step-circle').textContent = '2';
+    $('booking-success').style.display = 'none';
+    $('step3-buttons').style.display = '';
+  });
+
+  // Confirm booking
+  $('btn-confirm-booking').addEventListener('click', () => {
+    $('booking-success').style.display = 'block';
+    $('step3-buttons').style.display = 'none';
+    $('step-3').classList.remove('is-active');
+    $('step-3').classList.add('is-done');
+    $('step-3').querySelector('.step-circle').innerHTML = '<i class="fas fa-check"></i>';
+  });
+
+  // Cab type selection
+  qsa('.cab-option').forEach(opt => {
+    opt.addEventListener('click', () => {
+      qsa('.cab-option').forEach(o => o.classList.remove('is-selected'));
+      opt.classList.add('is-selected');
+      currentCab = opt.dataset.cab;
+    });
+  });
+
+  /* ── payment method selection ── */
+  qsa('.pm-option').forEach(pm => {
+    pm.addEventListener('click', () => {
+      qsa('.pm-option').forEach(p => p.classList.remove('is-selected'));
+      pm.classList.add('is-selected');
+      const isCard = pm.dataset.pm === 'card';
+      $('card-form').style.display = isCard ? '' : 'none';
+      $('alt-pay-msg').style.display = isCard ? 'none' : '';
+    });
+  });
+
+  // Pay button
+  $('btn-pay').addEventListener('click', () => {
+    $('payment-success').style.display = 'block';
+    $('pay-btn-wrap').style.display = 'none';
+  });
+
+  /* ── saved locations ── */
+  // Add location
+  $('btn-add-location').addEventListener('click', () => {
+    const name = $('new-loc-name').value.trim();
+    const type = $('new-loc-type').value;
+    const addr = $('new-loc-address').value.trim();
+    const coords = $('new-loc-coords').value.trim();
+    if (!name) { alert('Please enter a location name'); return; }
+
+    const icons = { Home: 'fas fa-house', Work: 'fas fa-briefcase', Airport: 'fas fa-plane', Other: 'fas fa-location-dot' };
+    const card = document.createElement('div');
+    card.className = 'location-card';
+    card.innerHTML = `
+      <div class="location-type-badge"><i class="${icons[type] || 'fas fa-map-pin'}"></i> ${type}</div>
+      <div class="location-name">${name}</div>
+      <div class="location-address">${addr || 'No address provided'}</div>
+      <div class="location-coords">${coords || '—'}</div>
+      <div class="location-actions">
+        <button class="button is-outline-gold is-small btn-edit-loc"><span class="icon"><i class="fas fa-pen"></i></span><span>Edit</span></button>
+        <button class="button is-ghost-danger is-small btn-delete-loc"><span class="icon"><i class="fas fa-trash"></i></span><span>Delete</span></button>
+      </div>`;
+    $('locations-grid').appendChild(card);
+    attachLocationEvents(card);
+
+    // reset
+    $('new-loc-name').value = '';
+    $('new-loc-address').value = '';
+    $('new-loc-coords').value = '';
+  });
+
+  // Edit / delete on existing cards
+  function attachLocationEvents(card) {
+    card.querySelector('.btn-edit-loc').addEventListener('click', () => {
+      $('edit-loc-name').value    = card.querySelector('.location-name').textContent;
+      $('edit-loc-address').value = card.querySelector('.location-address').textContent;
+      $('edit-loc-coords').value  = card.querySelector('.location-coords').textContent;
+      $('modal-edit-location').classList.add('is-open');
+
+      $('modal-edit-save').onclick = () => {
+        card.querySelector('.location-name').textContent    = $('edit-loc-name').value;
+        card.querySelector('.location-address').textContent = $('edit-loc-address').value;
+        card.querySelector('.location-coords').textContent  = $('edit-loc-coords').value;
+        $('modal-edit-location').classList.remove('is-open');
+      };
+    });
+
+    card.querySelector('.btn-delete-loc').addEventListener('click', () => {
+      $('modal-delete-location').classList.add('is-open');
+      $('modal-delete-confirm').onclick = () => {
+        card.remove();
+        $('modal-delete-location').classList.remove('is-open');
+      };
+    });
+  }
+
+  qsa('.location-card').forEach(attachLocationEvents);
+
+  /* ── modal close buttons ── */
+  ['modal-edit-close','modal-edit-cancel'].forEach(id => {
+    $(id).addEventListener('click', () => $('modal-edit-location').classList.remove('is-open'));
+  });
+  $('modal-delete-cancel').addEventListener('click', () => $('modal-delete-location').classList.remove('is-open'));
+
+  // Close modals on bg click
+  qsa('.rx-modal-bg').forEach(bg => {
+    bg.addEventListener('click', e => { if (e.target === bg) bg.classList.remove('is-open'); });
+  });
+</script>
+</body>
+</html>

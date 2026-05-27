@@ -16,13 +16,13 @@ if (require.main === module) {
     const app = express();
     app.use(express.json());
 
-    app.get('/', (req, res) => {
-        res.send('API running');
-        console.log("request sent for /");
+    app.get('/api/location', (req, res) => {
+        res.send('Location service is running');
+        console.log("request sent for /api/location");
     });
 
 
-    app.post('/location', async (req, res) => {
+    app.post('/api/location', async (req, res) => {
         //Creates a new booking, uploads it to firestore under bookings/{bookingId}, and prevents overwriting existing bookings
         //startLocation and endLocation are coordinates in the form of { lat: number, lng: number }
         try {
@@ -66,7 +66,7 @@ if (require.main === module) {
     });
 
 
-    app.put('/location/:locationId', async (req, res) => {
+    app.put('/api/location/:locationId', async (req, res) => {
         //Updates an existing location based on locationId
         try {
             let { locationId } = req.params;
@@ -113,7 +113,7 @@ if (require.main === module) {
         }
     });
 
-    app.delete('/location/:locationId', async (req, res) => {
+    app.delete('/api/location/:locationId', async (req, res) => {
         //Deletes a location based on locationId
         try {
             let { locationId } = req.params;
@@ -148,7 +148,7 @@ if (require.main === module) {
         }
     });
 
-    app.get('/location/:email', async (req, res) => {
+    app.get('/api/location/:email', async (req, res) => {
         //Fetches all locations for a specific email
         try {
             let { email } = req.params;
@@ -179,7 +179,7 @@ if (require.main === module) {
         }
     });
 
-    app.get('/location/weather/:city', async (req, res) => {
+    app.get('/api/location/weather/:city', async (req, res) => {
         //Fetches the current weather details for a specific city/locality
         try {
             let { city } = req.params;
@@ -231,9 +231,9 @@ if (require.main === module) {
         }
     });
 
-    app.listen(3003, () => {
-        console.log('Server is running on port 3003');
-        console.log("URL because im lazy: http://localhost:3003/location");
+    app.listen(3004, () => {
+        console.log('Server is running on port 3004');
+        console.log("URL because im lazy: http://localhost:3004/api/location");
     });
 }
 

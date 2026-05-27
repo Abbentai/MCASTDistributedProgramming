@@ -13,24 +13,12 @@ if (require.main === module) {
     const app = express();
     app.use(express.json());
 
-    app.get('/', (req, res) => {
-        res.send('API running');
-        console.log("request sent for /");
+    app.get('/api/account', (req, res) => {
+        res.send('Account service is running');
+        console.log("request sent for /api/account");
     });
 
-    app.get('/test', (req, res) => {
-        const accountData = {
-            username: 'Test Name',
-            name: 'Dingus',
-            surname: 'Mc Dingus',
-            age: 25,
-        };
-
-        res.json(accountData);
-        console.log("request sent for /test");
-    });
-
-    app.post('/account', async (req, res) => {
+    app.post('/api/account', async (req, res) => {
         //Creating a new account within firestore, hashing password before storage, and preventing overwriting existing accounts with the same email
         try {
             const { username, name, surname, email, age, password } = req.body;
@@ -76,7 +64,7 @@ if (require.main === module) {
         }
     });
 
-    app.post('/account/login', async (req, res) => {
+    app.post('/api/account/login', async (req, res) => {
         //Login endpoint, checks if the email exists and compares password has to the password provided, returning either a success of failure message
         try {
             const { email, password } = req.body;
@@ -106,7 +94,7 @@ if (require.main === module) {
         }
     });
 
-    app.get('/account/:email', async (req, res) => {
+    app.get('/api/account/:email', async (req, res) => {
         //Fetches account from firestore based on the email, returning details without the password hash
         try {
             const { email } = req.params;
@@ -128,12 +116,12 @@ if (require.main === module) {
         }
     });
 
-    app.listen(3000, () => {
-        console.log('Server is running on port 3000');
-        console.log("URL because im lazy: http://localhost:3000/account");
+    app.listen(3001, () => {
+        console.log('Server is running on port 3001');
+        console.log("URL because im lazy: http://localhost:3001/api/account");
     });
 
-    app.post('/notification/:email', async (req, res) => {
+    app.post('/api/notification/:email', async (req, res) => {
         //Saving a notification to the database
         try {
             const { header, message, type } = req.body;
@@ -169,7 +157,7 @@ if (require.main === module) {
         }
     });
 
-    app.get('/notification/:email', async (req, res) => {
+    app.get('/api/notification/:email', async (req, res) => {
         //Fetches all notifications for a specific email
         try {
             let { email } = req.params;
@@ -201,13 +189,11 @@ if (require.main === module) {
     });
 }
 
-const { db, appEmitter } = require('./server.js');
 
 async function accountExists(email) {
     const doc = await db.collection('accounts').doc(email).get();
     return doc.exists;
 }
-
 
 module.exports = { accountExists };
 

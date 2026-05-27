@@ -15,13 +15,13 @@ if (require.main === module) {
     const app = express();
     app.use(express.json());
 
-    app.get('/', (req, res) => {
-        res.send('API running');
-        console.log("request sent for /");
+    app.get('/api/booking', (req, res) => {
+        res.send('Booking service is running');
+        console.log("request sent for /api/booking");
     });
 
 
-    app.post('/booking', async (req, res) => {
+    app.post('/api/booking', async (req, res) => {
         //Creates a new booking, uploads it to firestore under bookings/{bookingId}, and prevents overwriting existing bookings
         //startLocation and endLocation are coordinates in the form of { lat: number, lng: number }
         try {
@@ -82,7 +82,7 @@ if (require.main === module) {
     });
 
     //You need to test this one later considering date being passed
-    app.get('/booking/getAllBookings/:status', async (req, res) => {
+    app.get('/api/booking/getAllBookings/:status', async (req, res) => {
         //Fetches all bookings based on status, either past or upcoming.
         try {
             const { status } = req.params;
@@ -123,9 +123,9 @@ if (require.main === module) {
         }
     });
 
-    app.listen(3001, () => {
-        console.log('Server is running on port 3001');
-        console.log("URL because im lazy: http://localhost:3001/booking");
+    app.listen(3002, () => {
+        console.log('Server is running on port 3002');
+        console.log("URL because im lazy: http://localhost:3002/api/booking");
     });
 }
 
