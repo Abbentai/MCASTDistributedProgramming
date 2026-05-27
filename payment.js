@@ -7,6 +7,7 @@ require('dotenv').config();
 
 //Error codes in case you need them
 //https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status
+const { db, appEmitter } = require('./server.js');
 
 //Consts for price calculation
 const CAB_MULTIPLIERS = {
@@ -22,8 +23,9 @@ const DAYTIME_MULTIPLIERS = {
     night: 1.2,
 };
 
-// Will be changed depending on event later on ig
-discount = 1
+const DEFAULT_DISCOUNT = 1.0;
+const LOYALTY_DISCOUNT = 0.9;
+
 
 //This bascially checks if the script is being ran directtly from node or being imported as a module, this is for function exports 
 if (require.main === module) {
@@ -38,11 +40,11 @@ if (require.main === module) {
 
 
     app.get('/payment/calculateprice/:bookingId', async (req, res) => {
-
         try {
             //Retrieve booking details from firestore
             const { bookingId } = req.params;
 
+            //Validation for bookingId presence and if booking is already paid for
             if (!bookingId) {
                 return res.status(400).json({ error: 'Booking ID is required!' });
             }
@@ -57,13 +59,16 @@ if (require.main === module) {
                 return res.status(409).json({ error: 'This booking has already been paid.' });
             }
 
-            //Calculate price base on cab type, daytime, and number of passengers
+            //Calculate price base on cab type, daytime, discount and number of passengers
+
+            //Cabtype multiplier
             const cabType = booking.cabType?.toLowerCase();
             const cabMultiplier = CAB_MULTIPLIERS[cabType];
             if (!cabMultiplier) {
                 return res.status(400).json({ error: `Unknown cab type: ${booking.cabType}` });
             }
 
+            //Passengers multiplier
             let passMultiplier;
             const passengers = parseInt(booking.noOfPassengers);
             if (passengers <= 0) {
@@ -79,11 +84,17 @@ if (require.main === module) {
                 return res.status(400).json({ error: 'Number of passengers must be 8 or less!' });
             }
 
+            //Time of day multiplier
             const daytimeMultiplier = getDaytimeMultiplier(booking.time);
+
+            //Discount retrieval
+            const statsDoc = await db.collection('userStats').doc(booking.email).get();
+            //Discount is granted if document exists and discountGranted is true, otherwise no discount is applied
+            const discountGranted = statsDoc.exists && statsDoc.data().discountGranted;
+            const discount = discountGranted ? LOYALTY_DISCOUNT : DEFAULT_DISCOUNT;
 
             const start = parseLatLng(booking.startLocation);
             const end = parseLatLng(booking.endLocation);
-
             const cabFare = await fetchCabFare(start.lat, start.lng, end.lat, end.lng, booking.time);
 
             //Final price calculation with breakdown
@@ -187,6 +198,3 @@ function parseLatLng(locationStr) {
     }
     return { lat, lng };
 }
-
-
-const { db, appEmitter } = require('./server.js');

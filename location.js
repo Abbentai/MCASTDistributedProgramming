@@ -8,6 +8,7 @@ require('dotenv').config();
 
 //Error codes in case you need them
 //https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status
+const { db, appEmitter } = require('./server.js');
 
 //This bascially checks if the script is being ran directtly from node or being imported as a module, this is for function exports 
 if (require.main === module) {
@@ -236,4 +237,3 @@ if (require.main === module) {
     });
 }
 
-const { db, appEmitter } = require('./server.js');

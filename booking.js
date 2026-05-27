@@ -3,9 +3,11 @@ const admin = require('firebase-admin');
 const bcrypt = require('bcrypt');
 const { getFirestore } = require('firebase-admin/firestore');
 const { accountExists } = require('./account');
+require('./listeners'); 
 
 //Error codes in case you need them
 //https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status
+const { db, appEmitter } = require('./server.js');
 
 //This bascially checks if the script is being ran directtly from node or being imported as a module, this is for function exports 
 if (require.main === module) {
@@ -25,7 +27,7 @@ if (require.main === module) {
         try {
             const { startLocation, endLocation, date, time, noOfPassengers, cabType, email } = req.body;
 
-            lowerCabType = cabType.toLowerCase();
+            const lowerCabType = cabType.toLowerCase();
 
             //Input validation
             if (!startLocation || !endLocation || !date || !time || !noOfPassengers || !lowerCabType || !email) {
@@ -67,6 +69,9 @@ if (require.main === module) {
             }
 
             await docRef.set(bookingData);
+
+            // Notify listeners that a booking was successfully created
+            appEmitter.emit('bookingCreated', { email, bookingId: bookingData.bookingId });
 
             res.status(201).json({ message: 'Booking created', booking: bookingData });
             console.log(`Booking created for: ${email} with ID: ${bookingData.bookingId}`);
@@ -124,4 +129,3 @@ if (require.main === module) {
     });
 }
 
-const { db, appEmitter } = require('./server.js');
