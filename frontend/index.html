@@ -54,8 +54,7 @@ Original chat logs https://claude.ai/share/e1010a4a-69d4-40d9-9cf0-cca6ba5cd85b 
 
             <div id="login-error"
                 style="display:none; color:var(--danger); font-size:.82rem; margin:.5rem 0; display:none">
-                <i class="fas fa-exclamation-circle"></i> Invalid credentials. Try <strong>admin / Cab
-                    Booking123</strong>
+                <i class="fas fa-exclamation-circle"></i> Invalid credentials: Your email or password is incorrect
             </div>
 
             <button class="button is-gold is-fullwidth" style="height:46px; font-size:.95rem" id="btn-login"
@@ -252,7 +251,7 @@ Original chat logs https://claude.ai/share/e1010a4a-69d4-40d9-9cf0-cca6ba5cd85b 
                 <div class="notif-dropdown" id="notif-dropdown">
                     <div class="notif-dropdown-header">
                         <span>Notifications</span>
-                        <a>Mark all read</a>
+                        <!-- <a>Mark all read</a> -->
                     </div>
                     <div class="notif-dropdown-list" id="notif-dropdown-list">
                     </div>
@@ -310,19 +309,30 @@ Original chat logs https://claude.ai/share/e1010a4a-69d4-40d9-9cf0-cca6ba5cd85b 
                     <div class="stat-grid">
                         <div class="stat-card">
                             <div class="stat-label">Total Rides</div>
-                            <div id="rides-stat-value" class="stat-value"></div>
+                            <div id="rides-stat-value" class="stat-value">0</div>
                             <div class="stat-icon"><i class="fas fa-route"></i></div>
                         </div>
                         <div class="stat-card">
                             <div class="stat-label">Saved Spots</div>
-                            <div id="spots-stat-value" class="stat-value"></div>
+                            <div id="spots-stat-value" class="stat-value">0</div>
                             <div class="stat-icon"><i class="fas fa-map-pin"></i></div>
                         </div>
                     </div>
 
                     <!-- Recent rides -->
                     <div class="rx-card">
-                        <div class="rx-card-title"><i class="fas fa-clock-rotate-left"></i> Recent Rides</div>
+                        <div class="rx-card-title"
+                            style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                            <span><i class="fas fa-clock-rotate-left"></i> Recent Rides</span>
+
+                            <div class="select is-small">
+                                <select id="dashboard-ride-filter"
+                                    style="background: var(--panel); color: var(--text); border-color: var(--border);">
+                                    <option value="past" selected>Past Bookings</option>
+                                    <option value="upcoming">Upcoming Bookings</option>
+                                </select>
+                            </div>
+                        </div>
                         <table class="table is-fullwidth" style="background:transparent; color:var(--text)">
                             <thead>
                                 <tr style="border-bottom:1px solid var(--border)">
@@ -347,71 +357,13 @@ Original chat logs https://claude.ai/share/e1010a4a-69d4-40d9-9cf0-cca6ba5cd85b 
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr style="border-bottom:1px solid rgba(255,255,255,.04)">
-                                    <td
-                                        style="border:none; padding:.7rem .75rem; font-family:monospace; font-size:.82rem; color:var(--gold)">
-                                        #RX-2847</td>
-                                    <td style="border:none; padding:.7rem .75rem; color:var(--muted); font-size:.85rem">
-                                        27/05/2026</td>
-                                    <td style="border:none; padding:.7rem .75rem; font-size:.85rem">St Paul's Bay →
-                                        Valletta</td>
-                                    <td style="border:none; padding:.7rem .75rem"><span class="tag-gold">Economic</span>
-                                    </td>
-                                    <td style="border:none; padding:.7rem .75rem; font-weight:600">€14.50</td>
-                                    <td style="border:none; padding:.7rem .75rem"><span
-                                            style="color:var(--success); font-size:.8rem"><i class="fas fa-circle"
-                                                style="font-size:.5rem; vertical-align:middle"></i> Completed</span>
-                                    </td>
-                                </tr>
-                                <tr style="border-bottom:1px solid rgba(255,255,255,.04)">
-                                    <td
-                                        style="border:none; padding:.7rem .75rem; font-family:monospace; font-size:.82rem; color:var(--gold)">
-                                        #RX-2831</td>
-                                    <td style="border:none; padding:.7rem .75rem; color:var(--muted); font-size:.85rem">
-                                        25/05/2026</td>
-                                    <td style="border:none; padding:.7rem .75rem; font-size:.85rem">Airport → Sliema
-                                    </td>
-                                    <td style="border:none; padding:.7rem .75rem"><span class="tag-gold">Business</span>
-                                    </td>
-                                    <td style="border:none; padding:.7rem .75rem; font-weight:600">€32.00</td>
-                                    <td style="border:none; padding:.7rem .75rem"><span
-                                            style="color:var(--success); font-size:.8rem"><i class="fas fa-circle"
-                                                style="font-size:.5rem; vertical-align:middle"></i> Completed</span>
-                                    </td>
-                                </tr>
                                 <tr>
-                                    <td
-                                        style="border:none; padding:.7rem .75rem; font-family:monospace; font-size:.82rem; color:var(--gold)">
-                                        #RX-2819</td>
-                                    <td style="border:none; padding:.7rem .75rem; color:var(--muted); font-size:.85rem">
-                                        22/05/2026</td>
-                                    <td style="border:none; padding:.7rem .75rem; font-size:.85rem">Valletta → Mdina
-                                    </td>
-                                    <td style="border:none; padding:.7rem .75rem"><span class="tag-gold">Van</span></td>
-                                    <td style="border:none; padding:.7rem .75rem; font-weight:600">€22.80</td>
-                                    <td style="border:none; padding:.7rem .75rem"><span
-                                            style="color:var(--success); font-size:.8rem"><i class="fas fa-circle"
-                                                style="font-size:.5rem; vertical-align:middle"></i> Completed</span>
+                                    <td colspan="6" style="text-align: center; color: var(--muted); padding: 1.5rem;">
+                                        No bookings found.
                                     </td>
                                 </tr>
                             </tbody>
                         </table>
-                    </div>
-
-                    <div class="rx-card"
-                        style="background:linear-gradient(135deg, rgba(201,168,76,.08) 0%, transparent 100%); border-color:rgba(201,168,76,.2)">
-                        <div style="display:flex; align-items:center; gap:1rem">
-                            <div style="font-size:2rem; color:var(--gold)"><i class="fas fa-car-side"></i></div>
-                            <div>
-                                <div style="font-family:'Playfair Display',serif; font-size:1.1rem; color:var(--text)">
-                                    Ready for your next ride?</div>
-                                <div style="color:var(--muted); font-size:.85rem; margin-top:.2rem">Book a taxi in under
-                                    60 seconds</div>
-                            </div>
-                            <button class="button is-gold" style="margin-left:auto" data-tab="book">
-                                Book Now <i class="fas fa-arrow-right" style="margin-left:.4rem"></i>
-                            </button>
-                        </div>
                     </div>
                 </div>
 
@@ -525,42 +477,22 @@ Original chat logs https://claude.ai/share/e1010a4a-69d4-40d9-9cf0-cca6ba5cd85b 
 
                     <!-- STEP 2: Vehicle -->
                     <div id="book-step-2" style="display:none">
-                        <div class="rx-card">
+                        <div id="vehicleCard" class="rx-card">
                             <div class="form-section-title">Select Cab Type</div>
 
                             <div class="cab-type-group">
                                 <div class="cab-option is-selected" data-cab="Economic">
                                     <div class="cab-icon">🚗</div>
                                     <div class="cab-name">Economic</div>
-                                    <div class="cab-price">From €8</div>
-                                </div>
-                                <div class="cab-option" data-cab="Business">
-                                    <div class="cab-icon">🚘</div>
-                                    <div class="cab-name">Business</div>
-                                    <div class="cab-price">From €18</div>
-                                </div>
-                                <div class="cab-option" data-cab="Van">
-                                    <div class="cab-icon">🚐</div>
-                                    <div class="cab-name">Van</div>
-                                    <div class="cab-price">From €22</div>
                                 </div>
                                 <div class="cab-option" data-cab="Premium">
-                                    <div class="cab-icon">🏎️</div>
+                                    <div class="cab-icon">🚕</div>
                                     <div class="cab-name">Premium</div>
-                                    <div class="cab-price">From €35</div>
                                 </div>
-                            </div>
-
-                            <div
-                                style="margin-top:1.5rem; padding:1rem; background:var(--panel); border-radius:8px; border:1px solid var(--border)">
-                                <div style="font-size:.8rem; color:var(--muted); margin-bottom:.4rem">Estimated fare for
-                                    selected route:</div>
-                                <div style="font-family:'Playfair Display',serif; font-size:1.6rem; color:var(--gold)">
-                                    €14.50 <span
-                                        style="font-size:.9rem; color:var(--muted); font-family:'DM Sans',sans-serif; font-weight:400">–
-                                        €18.00</span></div>
-                                <div style="font-size:.78rem; color:var(--muted); margin-top:.3rem"><i
-                                        class="fas fa-info-circle"></i> Final price may vary based on traffic</div>
+                                <div class="cab-option" data-cab="Executive">
+                                    <div class="cab-icon">🚘</div>
+                                    <div class="cab-name">Executive</div>
+                                </div>
                             </div>
                         </div>
 
@@ -615,9 +547,15 @@ Original chat logs https://claude.ai/share/e1010a4a-69d4-40d9-9cf0-cca6ba5cd85b 
                                     <span id="sum-email">nbsexy4@gmail.com</span>
                                 </div>
                                 <div
+                                    style="display:flex; justify-content:space-between; padding:.5rem 0; border-bottom:1px solid rgba(255,255,255,.05); font-size:.88rem">
+                                    <span style="color:var(--muted)">Discount Applied</span>
+                                    <span id="sum-discount">No discount</span>
+                                </div>
+
+                                <div
                                     style="display:flex; justify-content:space-between; padding:.7rem 0; font-size:1rem; font-weight:700; color:var(--gold)">
-                                    <span>Estimated Total</span>
-                                    <span>€14.50</span>
+                                    <span>Total Price</span>
+                                    <span id="sum-total-price"></span>
                                 </div>
                             </div>
                         </div>
@@ -628,9 +566,6 @@ Original chat logs https://claude.ai/share/e1010a4a-69d4-40d9-9cf0-cca6ba5cd85b 
                                     class="fas fa-circle-check"></i></div>
                             <div style="font-family:'Playfair Display',serif; font-size:1.2rem; color:var(--success)">
                                 Booking Confirmed!</div>
-                            <div style="color:var(--muted); font-size:.85rem; margin-top:.4rem">Your ride ID is <strong
-                                    style="color:var(--gold)">#RX-2848</strong>. A confirmation has been sent to your
-                                email.</div>
                         </div>
 
                         <div style="display:flex; justify-content:space-between" id="step3-buttons">
@@ -903,7 +838,20 @@ Original chat logs https://claude.ai/share/e1010a4a-69d4-40d9-9cf0-cca6ba5cd85b 
         function activateTab(tabName) {
             qsa('.nav-item').forEach(n => n.classList.toggle('is-active', n.dataset.tab === tabName));
             qsa('.tab-panel').forEach(p => p.classList.toggle('is-active', p.id === 'tab-' + tabName));
+
+            // Auto-refresh data when the user steps onto the dashboard explicitly
+            if (tabName === 'dashboard') {
+                const currentFilter = $('dashboard-ride-filter').value;
+                const loggedInEmail = $('f-email').value; // Grabbing active email contextual reference 
+                fetchBookings(loggedInEmail, currentFilter);
+            }
         }
+        $('dashboard-ride-filter').addEventListener('change', (e) => {
+            const selectedStatus = e.target.value;
+            const loggedInEmail = $('f-email').value;
+            fetchBookings(loggedInEmail, selectedStatus);
+        });
+
         qsa('.nav-item').forEach(item => {
             item.addEventListener('click', () => activateTab(item.dataset.tab));
         });
@@ -941,7 +889,27 @@ Original chat logs https://claude.ai/share/e1010a4a-69d4-40d9-9cf0-cca6ba5cd85b 
         });
 
         // Step 2 → 3
-        $('btn-step2-next').addEventListener('click', () => {
+        $('btn-step2-next').addEventListener('click', async () => {
+            const bookingId = await createBooking();
+            const priceData = await calculatePrice(bookingId);
+            $('sum-email').textContent = $('f-email').value;
+
+            // Total price
+            $('sum-total-price').textContent = `€${priceData.totalPrice}`;
+
+            // Discount display
+            if (priceData.discount < 1) {
+                const discountPercent = Math.round((1 - priceData.discount) * 100);
+
+                $('sum-discount').innerHTML =
+                    `<span class="tag-gold">${discountPercent}% OFF</span>`;
+
+                $('sum-discount').style.color = 'var(--success)';
+            } else {
+                $('sum-discount').textContent = 'No discount';
+                $('sum-discount').style.color = 'var(--muted)';
+            }
+
             hide('book-step-2');
             show('book-step-3');
             $('step-2').classList.remove('is-active');

@@ -24,6 +24,7 @@ async function authenticateUser() {
             populateUI(user);
             fetchNotifications(email);
             fetchLocations(email);
+            fetchBookings(email, 'past');
             document.getElementById('screen-login').classList.remove('is-active');
             document.getElementById('screen-app').classList.add('is-active');
         } else {
@@ -106,7 +107,6 @@ async function fetchLocations(email) {
 }
 
 async function addLocation() {
-    debugger
     const locationName = document.getElementById('new-loc-name').value.trim();
     const houseNum = document.getElementById('new-loc-house-num').value.trim();
     const street = document.getElementById('new-loc-street').value.trim();
@@ -275,11 +275,138 @@ async function fetchNotifications(email) {
 }
 
 function converttoTimeString(timeInSeconds) {
-    debugger
     const date = new Date(timeInSeconds * 1000);
     const timeString = date.toLocaleString('en-GB', {
         day: '2-digit', month: 'short', year: 'numeric',
         hour: '2-digit', minute: '2-digit'
     });
     return timeString;
+}
+
+// -------- Booking Section -------
+async function fetchBookings(email, status = 'past') {
+    try {
+        const response = await fetch(`http://localhost:3000/api/booking/getAllBookings/${email}/${status}`);
+
+        if (!response.ok) {
+            throw new Error(`Failed to fetch bookings: ${response.statusText}`);
+        }
+
+        const bookings = await response.json();
+        const tbody = document.querySelector('.rx-card table tbody');
+
+        if (!tbody) return;
+
+        //Clearing all existing rows
+        tbody.innerHTML = '';
+
+        if (bookings.length === 0) {
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="6" style="text-align: center; color: var(--muted); padding: 1.5rem;">
+                        No ${status} bookings found.
+                    </td>
+                </tr>`;
+            return;
+        }
+
+        // Loop through collections and build table rows dynamically
+        bookings.forEach(booking => {
+            const row = document.createElement('tr');
+            row.style.borderBottom = '1px solid rgba(255,255,255,.04)';
+
+            // Format Timestamp safely (handles seconds integers or raw date strings)
+            let formattedDate = booking.date || '—';
+            if (booking.createdAt && booking.createdAt._seconds) {
+                formattedDate = converttoTimeString(booking.createdAt._seconds);
+            }
+
+            // Capitalize status for clean UI pill presentation
+            const capStatus = status.charAt(0).toUpperCase() + status.slice(1);
+            const statusColor = status === 'upcoming' ? 'var(--gold)' : 'var(--success)';
+
+            row.innerHTML = `
+                <td style="border:none; padding:.7rem .75rem; font-family:monospace; font-size:.82rem; color:var(--gold)">
+                    #${booking.id || booking.bookingId || 'N/A'}
+                </td>
+                <td style="border:none; padding:.7rem .75rem; color:var(--muted); font-size:.85rem">
+                    ${formattedDate}
+                </td>
+                <td style="border:none; padding:.7rem .75rem; font-size:.85rem">
+                    ${booking.startLocation || '—'} → ${booking.endLocation || '—'}
+                </td>
+                <td style="border:none; padding:.7rem .75rem">
+                    <span class="tag-gold">${booking.cabType || booking.cab || 'Economic'}</span>
+                </td>
+                <td style="border:none; padding:.7rem .75rem; font-weight:600">
+                    €${parseFloat(booking.amount || booking.totalPrice || 0).toFixed(2)}
+                </td>
+                <td style="border:none; padding:.7rem .75rem">
+                    <span style="color:${statusColor}; font-size:.8rem">
+                        <i class="fas fa-circle" style="font-size:.5rem; vertical-align:middle; margin-right: 0.25rem;"></i>
+                        ${capStatus}
+                    </span>
+                </td>
+            `;
+            tbody.appendChild(row);
+        });
+
+        const ridesStat = document.getElementById('rides-stat-value');
+        if (ridesStat) {
+            ridesStat.textContent = bookings.length;
+        }
+
+    } catch (err) {
+        console.error('Error fetching bookings:', err);
+        const tbody = document.querySelector('.rx-card table tbody');
+        if (tbody) {
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="6" style="text-align: center; color: var(--danger); padding: 1.5rem;">
+                        <i class="fas fa-exclamation-triangle"></i> No bookings available.
+                    </td>
+                </tr>`;
+        }
+    }
+} 
+
+async function createBooking() {
+    try{
+        const email = document.getElementById('f-email').value.trim();
+        const startLocation = document.getElementById('f-start').value.trim();
+        const endLocation = document.getElementById('f-end').value.trim();
+        const date = document.getElementById('f-date').value;
+        const time = document.getElementById('f-time').value;
+        const noOfPassengers = document.getElementById('f-passengers').value;
+        const activeCabElement = document.querySelector('.cab-option.is-selected');
+    const cabType = activeCabElement ? activeCabElement.dataset.cab : 'Economic';
+
+        const response = await fetch('http://localhost:3000/api/booking', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, startLocation, endLocation, date, time, noOfPassengers, cabType })
+        });
+        const result = await response.json();
+        console.log('Booking created:', result);
+        return result.booking.bookingId;
+    }
+    catch(err){
+        console.error('Error creating booking:', err);
+    }
+}
+
+// ------- Price Breakdown Section -------
+async function calculatePrice(bookingId) {
+    try {
+        const response = await fetch(`http://localhost:3000/api/payment/calculateprice/${bookingId}`);
+        if (!response.ok) {
+            throw new Error(`Failed to fetch price breakdown: ${response.statusText}`);
+        }
+        const priceBreakdown = await response.json();
+        console.log('Price Breakdown:', priceBreakdown);
+        return priceBreakdown.breakdown;
+    } catch (err) {
+        console.error('Error fetching price breakdown:', err);
+        alert('An error occurred while fetching the price breakdown. Please try again later.');
+    }
 }

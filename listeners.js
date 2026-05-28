@@ -43,19 +43,19 @@ appEmitter.on('bookingCreated', async ({ email, bookingId }) => {
     setTimeout(async () => {
         try {
             const bookingDoc = await db.collection('bookings').doc(bookingId).get();
- 
+
             if (!bookingDoc.exists) {
                 console.warn(`Booking ${bookingId} no longer exists — skipping notification.`);
                 return;
             }
- 
+
             appEmitter.emit('cabReady', { email, booking: bookingDoc.data() });
- 
+
         } catch (err) {
             console.error('[Error] cabReady timer callback failed:', err.message);
         }
     }, CAB_DELAY);
- 
+
     console.log(`Driver search started for ${bookingId}. Notification scheduled in 3 minutes.`);
 
 });
@@ -70,10 +70,10 @@ appEmitter.on('discountAvailable', async ({ email }) => {
         await statsRef.set({ discountGranted: true }, { merge: true });
 
         //Store the notification so the client can surface it
-        await db.collection('notifications').add({
-            email,
+        await db.collection('accounts').doc(email).collection('notifications').add({
             type: 'discount',
-            message: 'You have earned a 10% discount on your next booking. Congrats!',
+            title: 'Discount Available!',
+            message: 'Congratulations! You have earned a 10% discount on your next booking.',
             createdAt: new Date(),
             read: false,
         });
@@ -89,24 +89,25 @@ appEmitter.on('discountAvailable', async ({ email }) => {
 appEmitter.on('cabReady', async ({ email, booking }) => {
     //Listener is triggered when the cab is read, creating a notification for the user with cab and ride details
     try {
-        await db.collection('notifications').add({
+        await db.collection('accounts').doc(email).collection('notifications').add({
             email,
             type: 'cabReady',
+            title: 'Your cab is ready!',
             message: `Your cab is on the way! A ${booking.cabType} cab has been assigned for your ride.`,
             rideDetails: {
-                bookingId:      booking.bookingId,
-                startLocation:  booking.startLocation,
-                endLocation:    booking.endLocation,
-                date:           booking.date,
-                time:           booking.time,
+                bookingId: booking.bookingId,
+                startLocation: booking.startLocation,
+                endLocation: booking.endLocation,
+                date: booking.date,
+                time: booking.time,
                 noOfPassengers: booking.noOfPassengers,
-                cabType:        booking.cabType,
+                cabType: booking.cabType,
             },
             createdAt: new Date(),
         });
- 
+
         console.log(`[CabReady] Notification published for ${email} — booking ${booking.bookingId}.`);
- 
+
     } catch (err) {
         console.error('[Error] cabReady listener failed:', err.message);
     }

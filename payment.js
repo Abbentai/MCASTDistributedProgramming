@@ -49,7 +49,9 @@ if (require.main === module) {
                 return res.status(400).json({ error: 'Booking ID is required!' });
             }
 
-            const bookingDoc = await db.collection('bookings').doc(bookingId).get();
+            const bookingRef = db.collection('bookings').doc(bookingId);
+            const bookingDoc = await bookingRef.get();
+            
             if (!bookingDoc.exists) {
                 return res.status(404).json({ error: 'Booking with provided ID does not exist!' });
             }
@@ -110,6 +112,10 @@ if (require.main === module) {
                 totalPrice,
             };
 
+            await bookingRef.update({
+                price: totalPrice,
+            });
+
             return res.status(200).json({
                 message: 'Price calculated successfully.',
                 breakdown,
@@ -153,7 +159,7 @@ async function fetchCabFare(startLat, startLng, endLat, endLng, timeStr) {
     if (!fares || fares.length === 0) {
         throw new Error('No fare data returned from external API.');
     }
-    
+
     //Determing the label to refer to
     const hour = parseInt(timeStr.split(':')[0]);
     const isNight = hour < 8;

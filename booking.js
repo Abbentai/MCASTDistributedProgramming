@@ -3,7 +3,7 @@ const admin = require('firebase-admin');
 const bcrypt = require('bcrypt');
 const { getFirestore } = require('firebase-admin/firestore');
 const { accountExists } = require('./account');
-require('./listeners'); 
+require('./listeners');
 
 //Error codes in case you need them
 //https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status
@@ -52,7 +52,7 @@ if (require.main === module) {
                 startLocation,
                 endLocation,
                 date,
-                time,   
+                time,
                 noOfPassengers,
                 cabType,
                 email,
@@ -82,13 +82,17 @@ if (require.main === module) {
     });
 
     //You need to test this one later considering date being passed
-    app.get('/api/booking/getAllBookings/:status', async (req, res) => {
+    app.get('/api/booking/getAllBookings/:email/:status', async (req, res) => {
         //Fetches all bookings based on status, either past or upcoming.
         try {
-            const { status } = req.params;
+            const { email, status } = req.params;
 
             if (status != "past" && status != "upcoming") {
                 return res.status(400).json({ error: 'Status must be either past or upcoming!' });
+            }
+
+            if (!email) {
+                return res.status(400).json({ error: 'Email is required!' });
             }
 
             const bookings = await db.collection('bookings').get();
@@ -99,15 +103,25 @@ if (require.main === module) {
                 const data = doc.data();
 
                 //Parsing string temporarily before changed to a straight up timestamp 
-                const [day, month, year] = data.date.split('/');
-                const dateTime = new Date(`${year}-${month}-${day}T${data.time}`);
+                const [day, month, year] = data.date.split('-');
+                const [hours, minutes] = data.time.split(':');
 
-                if (status === "past" && dateTime < now) {
+                const dateTime = new Date(
+                    Number(year),
+                    Number(month) - 1,
+                    Number(day),
+                    Number(hours),
+                    Number(minutes)
+                );
 
-                    bookingData.push(doc.data());
-                }
-                else if (status === "upcoming" && dateTime >= now) {
-                    bookingData.push(doc.data());
+                if (data.email === email) {
+                    if (status === "past" && dateTime < now) {
+
+                        bookingData.push(doc.data());
+                    }
+                    else if (status === "upcoming" && dateTime >= now) {
+                        bookingData.push(doc.data());
+                    }
                 }
             });
 
