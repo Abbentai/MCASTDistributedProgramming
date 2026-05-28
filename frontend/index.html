@@ -64,11 +64,6 @@ Original chat logs https://claude.ai/share/e1010a4a-69d4-40d9-9cf0-cca6ba5cd85b 
                 <span>Sign In</span>
             </button>
 
-            <p style="text-align:center; margin-top:1.2rem; font-size:.8rem; color:var(--muted)">
-                Demo credentials: <strong style="color:var(--text)">admin</strong> / <strong
-                    style="color:var(--text)">Cab Booking123</strong>
-            </p>
-
             <div class="gold-divider" style="margin-top:1.5rem"></div>
             <p style="text-align:center; margin-top:1rem; font-size:.85rem; color:var(--muted)">
                 Don't have an account?
@@ -295,10 +290,6 @@ Original chat logs https://claude.ai/share/e1010a4a-69d4-40d9-9cf0-cca6ba5cd85b 
                 <div class="nav-item" data-tab="locations">
                     <span class="nav-icon"><i class="fas fa-map-pin"></i></span>
                     <span>Saved Locations</span>
-                </div>
-                <div class="nav-item" data-tab="payment">
-                    <span class="nav-icon"><i class="fas fa-credit-card"></i></span>
-                    <span>Payment</span>
                 </div>
                 <div class="nav-item" data-tab="notifications">
                     <span class="nav-icon"><i class="fas fa-bell"></i></span>
@@ -672,12 +663,19 @@ Original chat logs https://claude.ai/share/e1010a4a-69d4-40d9-9cf0-cca6ba5cd85b 
                                     <label class="label">Location Name</label>
                                     <input class="input" type="text" id="new-loc-name"
                                         placeholder="e.g. Home, Office, Airport" />
+                                    <p class="help" id="new-loc-name-err" style="display:none; color:var(--danger)">
+                                        <i class="fas fa-circle-exclamation"></i> Location name is required
+                                    </p>
                                 </div>
                             </div>
                             <div class="column">
                                 <div class="field">
                                     <label class="label">House Number</label>
                                     <input class="input" type="text" id="new-loc-house-num" placeholder="e.g. 3" />
+                                    <p class="help" id="new-loc-house-num-err"
+                                        style="display:none; color:var(--danger)">
+                                        <i class="fas fa-circle-exclamation"></i> House number is required
+                                    </p>
                                 </div>
                             </div>
                         </div>
@@ -685,18 +683,35 @@ Original chat logs https://claude.ai/share/e1010a4a-69d4-40d9-9cf0-cca6ba5cd85b 
                             <div class="column">
                                 <div class="field">
                                     <label class="label">Street</label>
-                                    <input class="input" type="text" id="new-loc-street" placeholder="e.g. Zejtun" />
+                                    <input class="input" type="text" id="new-loc-street"
+                                        placeholder="e.g. Triq San Pawl" />
+                                    <p class="help" id="new-loc-street-err" style="display:none; color:var(--danger)">
+                                        <i class="fas fa-circle-exclamation"></i> Street is required
+                                    </p>
                                 </div>
                             </div>
                             <div class="column">
                                 <div class="field">
-                                    <label class="label">Country</label>
-                                    <input class="input" type="text" id="new-loc-country" placeholder="e.g. Malta" />
+                                    <label class="label">City</label>
+                                    <input class="input" type="text" id="new-loc-city" placeholder="e.g. Zejtun" />
+                                    <p class="help" id="new-loc-city-err" style="display:none; color:var(--danger)">
+                                        <i class="fas fa-circle-exclamation"></i> City is required
+                                    </p>
                                 </div>
                             </div>
+
                         </div>
+                        <div class="field">
+                            <label class="label">Country</label>
+                            <input class="input" type="text" id="new-loc-country" placeholder="e.g. Malta" />
+                            <p class="help" id="new-loc-country-err" style="display:none; color:var(--danger)">
+                                <i class="fas fa-circle-exclamation"></i> Country is required
+                            </p>
+                        </div>
+                        <!-- Hidden — populated by populateUI so addLocation always has the email -->
+                        <input type="hidden" id="new-loc-email" />
                         <div style="display:flex; justify-content:flex-end; margin-top:.75rem">
-                            <button class="button is-gold" id="btn-add-location">
+                            <button class="button is-gold" id="btn-add-location" onclick="validateLocation()">
                                 <i class="fas fa-plus" style="margin-right:.5rem"></i> Save Location
                             </button>
                         </div>
@@ -707,140 +722,6 @@ Original chat logs https://claude.ai/share/e1010a4a-69d4-40d9-9cf0-cca6ba5cd85b 
                     </div>
                 </div>
 
-                <!-- ── TAB: PAYMENT ─────────────────────── -->
-                <div class="tab-panel" id="tab-payment">
-                    <div class="page-header">
-                        <h2>Payment</h2>
-                        <p>Manage your payment methods and complete transactions.</p>
-                    </div>
-
-                    <!-- Mock payment gateway -->
-                    <div class="rx-card">
-                        <div class="rx-card-title"><i class="fas fa-receipt"></i> Order Summary</div>
-                        <div class="payment-summary">
-                            <div class="payment-row">
-                                <span class="label-text">Ride (#RX-2848)</span>
-                                <span class="amount">€14.50</span>
-                            </div>
-                            <div class="payment-row">
-                                <span class="label-text">Service fee</span>
-                                <span class="amount">€0.80</span>
-                            </div>
-                            <div class="payment-row">
-                                <span class="label-text">Promo discount</span>
-                                <span class="amount" style="color:var(--success)">–€2.00</span>
-                            </div>
-                            <div class="payment-row">
-                                <span class="label-text" style="color:var(--text); font-weight:700">Total</span>
-                                <span class="amount">€13.30</span>
-                            </div>
-                        </div>
-
-                        <div class="rx-card-title" style="margin-top:1.5rem"><i class="fas fa-wallet"></i> Payment
-                            Method</div>
-                        <div class="payment-methods">
-                            <div class="pm-option is-selected" data-pm="card">
-                                <div class="pm-icon"><i class="fas fa-credit-card"></i></div>
-                                <div class="pm-name">Card</div>
-                            </div>
-                            <div class="pm-option" data-pm="paypal">
-                                <div class="pm-icon"><i class="fab fa-paypal"></i></div>
-                                <div class="pm-name">PayPal</div>
-                            </div>
-                            <div class="pm-option" data-pm="apple">
-                                <div class="pm-icon"><i class="fab fa-apple-pay"></i></div>
-                                <div class="pm-name">Apple Pay</div>
-                            </div>
-                            <div class="pm-option" data-pm="google">
-                                <div class="pm-icon"><i class="fab fa-google-pay"></i></div>
-                                <div class="pm-name">Google Pay</div>
-                            </div>
-                        </div>
-
-                        <!-- Card form -->
-                        <div id="card-form">
-                            <div class="field">
-                                <label class="label">Cardholder Name</label>
-                                <input class="input" type="text" placeholder="John Smith" />
-                            </div>
-                            <div class="field" style="margin-top:.9rem">
-                                <label class="label">Card Number</label>
-                                <div class="control has-icons-left">
-                                    <input class="input" type="text" placeholder="4242 4242 4242 4242" maxlength="19" />
-                                    <span class="icon is-left" style="color:var(--muted)"><i
-                                            class="fas fa-credit-card"></i></span>
-                                </div>
-                            </div>
-                            <div class="card-input-group" style="margin-top:.9rem">
-                                <div class="field">
-                                    <label class="label">Expiry</label>
-                                    <input class="input" type="text" placeholder="MM / YY" maxlength="7" />
-                                </div>
-                                <div class="field">
-                                    <label class="label">CVV</label>
-                                    <input class="input" type="text" placeholder="•••" maxlength="4" />
-                                </div>
-                            </div>
-                            <div class="field" style="margin-top:.9rem">
-                                <label class="label">Billing Email</label>
-                                <input class="input" type="email" placeholder="your@email.com"
-                                    value="nbsexy4@gmail.com" />
-                            </div>
-                        </div>
-
-                        <!-- Other payment methods placeholder -->
-                        <div id="alt-pay-msg"
-                            style="display:none; padding:2rem; text-align:center; color:var(--muted); font-size:.9rem">
-                            <i class="fas fa-external-link-alt"
-                                style="font-size:1.5rem; margin-bottom:.7rem; display:block; opacity:.5"></i>
-                            You will be redirected to complete payment securely.
-                        </div>
-
-                        <!-- Success banner -->
-                        <div class="success-banner" id="payment-success">
-                            <div class="success-icon"><i class="fas fa-circle-check"></i></div>
-                            <h3>Payment Successful!</h3>
-                            <p>€13.30 charged. Your ride #RX-2848 is confirmed.</p>
-                        </div>
-
-                        <div style="margin-top:1.5rem" id="pay-btn-wrap">
-                            <button class="button is-gold is-fullwidth"
-                                style="height:50px; font-size:.95rem; letter-spacing:.04em" id="btn-pay">
-                                <i class="fas fa-lock" style="margin-right:.6rem"></i> Pay €13.30 Securely
-                            </button>
-                            <div style="text-align:center; margin-top:.75rem; font-size:.75rem; color:var(--muted)">
-                                <i class="fas fa-shield-halved"></i> 256-bit SSL encryption &nbsp;·&nbsp; PCI DSS
-                                compliant
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Saved cards -->
-                    <div class="rx-card">
-                        <div class="rx-card-title"><i class="fas fa-vault"></i> Saved Cards</div>
-                        <div style="display:flex; flex-direction:column; gap:.75rem">
-                            <div
-                                style="display:flex; align-items:center; gap:1rem; padding:.9rem 1rem; background:var(--panel); border:1px solid var(--border); border-radius:8px">
-                                <i class="fab fa-cc-visa" style="font-size:1.8rem; color:#1a73e8"></i>
-                                <div style="flex:1">
-                                    <div style="font-weight:600; font-size:.88rem">Visa •••• 4242</div>
-                                    <div style="font-size:.78rem; color:var(--muted)">Expires 08/28</div>
-                                </div>
-                                <span style="font-size:.72rem; color:var(--success)">Default</span>
-                                <button class="button is-ghost-danger is-small"><i class="fas fa-trash"></i></button>
-                            </div>
-                            <div
-                                style="display:flex; align-items:center; gap:1rem; padding:.9rem 1rem; background:var(--panel); border:1px solid var(--border); border-radius:8px">
-                                <i class="fab fa-cc-mastercard" style="font-size:1.8rem; color:#eb001b"></i>
-                                <div style="flex:1">
-                                    <div style="font-weight:600; font-size:.88rem">Mastercard •••• 8831</div>
-                                    <div style="font-size:.78rem; color:var(--muted)">Expires 02/27</div>
-                                </div>
-                                <button class="button is-ghost-danger is-small"><i class="fas fa-trash"></i></button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
 
                 <!-- ── TAB: NOTIFICATIONS ────────────────── -->
                 <div class="tab-panel" id="tab-notifications">
@@ -856,7 +737,7 @@ Original chat logs https://claude.ai/share/e1010a4a-69d4-40d9-9cf0-cca6ba5cd85b 
                     </div> -->
 
                     <div id="notif-list" class="notif-list">
-                      
+
                     </div>
                 </div>
 
@@ -879,23 +760,20 @@ Original chat logs https://claude.ai/share/e1010a4a-69d4-40d9-9cf0-cca6ba5cd85b 
                 <input class="input" type="text" id="edit-loc-name" value="Home" />
             </div>
             <div class="field" style="margin-top:.9rem">
-                <label class="label">Type</label>
-                <div class="select is-fullwidth">
-                    <select id="edit-loc-type">
-                        <option selected>Home</option>
-                        <option>Work</option>
-                        <option>Airport</option>
-                        <option>Other</option>
-                    </select>
-                </div>
+                <label class="label">House Number</label>
+                <input class="input" type="text" id="edit-loc-house" />
             </div>
             <div class="field" style="margin-top:.9rem">
-                <label class="label">Full Address</label>
-                <input class="input" type="text" id="edit-loc-address" value="12 Triq San Pawl, St Paul's Bay, Malta" />
+                <label class="label">Street</label>
+                <input class="input" type="text" id="edit-loc-street" />
             </div>
             <div class="field" style="margin-top:.9rem">
-                <label class="label">Coordinates (lat, lng)</label>
-                <input class="input" type="text" id="edit-loc-coords" value="35.865655, 14.519315" />
+                <label class="label">City</label>
+                <input class="input" type="text" id="edit-loc-city" />
+            </div>
+            <div class="field" style="margin-top:.9rem">
+                <label class="label">Country</label>
+                <input class="input" type="text" id="edit-loc-country" />
             </div>
             <div style="display:flex; gap:.75rem; justify-content:flex-end; margin-top:1.5rem">
                 <button class="button is-outline-gold" id="modal-edit-cancel">Cancel</button>
@@ -925,6 +803,80 @@ Original chat logs https://claude.ai/share/e1010a4a-69d4-40d9-9cf0-cca6ba5cd85b 
         </div>
     </div>
 
+    <!-- ═══════════════════════════════════════════
+     CITY WEATHER MODAL
+═══════════════════════════════════════════ -->
+    <div class="rx-modal-bg" id="modal-weather-location">
+        <div class="rx-modal" style="max-width: 420px;">
+            <div class="rx-modal-header">
+                <div class="rx-modal-title" id="weather-modal-title">Weather Details</div>
+                <div class="rx-modal-close" id="modal-weather-close"><i class="fas fa-xmark"></i></div>
+            </div>
+
+            <div id="weather-loading" style="text-align: center; padding: 2rem 0;">
+                <span class="icon is-large" style="color: var(--gold); font-size: 2rem;">
+                    <i class="fas fa-spinner fa-pulse"></i>
+                </span>
+                <p style="color: var(--muted); margin-top: 0.5rem; font-size: 0.9rem;">Fetching weather updates...</p>
+            </div>
+
+            <div id="weather-content" style="display: none; margin-top: 1rem;">
+                <div
+                    style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem; background: rgba(201,168,76,.05); padding: 1rem; border-radius: var(--radius); border: 1px solid rgba(201,168,76,.15);">
+                    <div>
+                        <div id="weather-condition"
+                            style="font-family: 'Playfair Display', serif; font-size: 1.4rem; color: var(--text);">Sunny
+                        </div>
+                        <div id="weather-local-time"
+                            style="font-size: 0.78rem; color: var(--muted); margin-top: 0.2rem;">Local time: —</div>
+                    </div>
+                    <div id="weather-temp"
+                        style="font-family: 'Playfair Display', serif; font-size: 2.2rem; color: var(--gold); font-weight: 700;">
+                        31.2°C</div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                    <div
+                        style="background: var(--panel); padding: 0.75rem; border-radius: 6px; border: 1px solid var(--border);">
+                        <div
+                            style="font-size: 0.72rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em;">
+                            Feels Like</div>
+                        <div id="weather-feels"
+                            style="font-size: 1rem; color: var(--text); font-weight: 500; margin-top: 0.2rem;">—</div>
+                    </div>
+                    <div
+                        style="background: var(--panel); padding: 0.75rem; border-radius: 6px; border: 1px solid var(--border);">
+                        <div
+                            style="font-size: 0.72rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em;">
+                            Humidity</div>
+                        <div id="weather-humidity"
+                            style="font-size: 1rem; color: var(--text); font-weight: 500; margin-top: 0.2rem;">—</div>
+                    </div>
+                    <div
+                        style="background: var(--panel); padding: 0.75rem; border-radius: 6px; border: 1px solid var(--border);">
+                        <div
+                            style="font-size: 0.72rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em;">
+                            Wind Velocity</div>
+                        <div id="weather-wind"
+                            style="font-size: 1rem; color: var(--text); font-weight: 500; margin-top: 0.2rem;">—</div>
+                    </div>
+                    <div
+                        style="background: var(--panel); padding: 0.75rem; border-radius: 6px; border: 1px solid var(--border);">
+                        <div
+                            style="font-size: 0.72rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em;">
+                            UV Index</div>
+                        <div id="weather-uv"
+                            style="font-size: 1rem; color: var(--text); font-weight: 500; margin-top: 0.2rem;">—</div>
+                    </div>
+                </div>
+            </div>
+
+            <div style="display: flex; justify-content: flex-end; margin-top: 1.5rem;">
+                <button class="button is-gold" id="modal-weather-close-btn" style="min-width: 90px;">Close</button>
+            </div>
+        </div>
+    </div>
+
 
     <!-- ══════════════════════════════
   JAVASCRIPT — interactions only
@@ -937,19 +889,6 @@ Original chat logs https://claude.ai/share/e1010a4a-69d4-40d9-9cf0-cca6ba5cd85b 
         const hide = id => { $(id).style.display = 'none'; };
         const qs = sel => document.querySelector(sel);
         const qsa = sel => [...document.querySelectorAll(sel)];
-
-        /* ── login ── */
-        //   $('btn-login').addEventListener('click', () => {
-        //     const u = $('login-username').value.trim();
-        //     const p = $('login-password').value.trim();
-        //     if (u === 'admin' && p === 'Cab Booking123') {
-        //       $('screen-login').classList.remove('is-active');
-        //       $('screen-app').classList.add('is-active');
-        //     } else {
-        //       $('login-error').style.display = 'block';
-        //     }
-        //   });
-        //   $('login-password').addEventListener('keydown', e => { if (e.key === 'Enter') $('btn-login').click(); });
 
         /* ── logout ── */
         $('btn-logout').addEventListener('click', () => {
@@ -1048,78 +987,6 @@ Original chat logs https://claude.ai/share/e1010a4a-69d4-40d9-9cf0-cca6ba5cd85b 
             });
         });
 
-        /* ── payment method selection ── */
-        qsa('.pm-option').forEach(pm => {
-            pm.addEventListener('click', () => {
-                qsa('.pm-option').forEach(p => p.classList.remove('is-selected'));
-                pm.classList.add('is-selected');
-                const isCard = pm.dataset.pm === 'card';
-                $('card-form').style.display = isCard ? '' : 'none';
-                $('alt-pay-msg').style.display = isCard ? 'none' : '';
-            });
-        });
-
-        // Pay button
-        $('btn-pay').addEventListener('click', () => {
-            $('payment-success').style.display = 'block';
-            $('pay-btn-wrap').style.display = 'none';
-        });
-
-        /* ── saved locations ── */
-        // Add location
-        $('btn-add-location').addEventListener('click', () => {
-            const name = $('new-loc-name').value.trim();
-            const type = $('new-loc-type').value;
-            const addr = $('new-loc-address').value.trim();
-            const coords = $('new-loc-coords').value.trim();
-            if (!name) { alert('Please enter a location name'); return; }
-
-            const icons = { Home: 'fas fa-house', Work: 'fas fa-briefcase', Airport: 'fas fa-plane', Other: 'fas fa-location-dot' };
-            const card = document.createElement('div');
-            card.className = 'location-card';
-            card.innerHTML = `
-      <div class="location-type-badge"><i class="${icons[type] || 'fas fa-map-pin'}"></i> ${type}</div>
-      <div class="location-name">${name}</div>
-      <div class="location-address">${addr || 'No address provided'}</div>
-      <div class="location-coords">${coords || '—'}</div>
-      <div class="location-actions">
-        <button class="button is-outline-gold is-small btn-edit-loc"><span class="icon"><i class="fas fa-pen"></i></span><span>Edit</span></button>
-        <button class="button is-ghost-danger is-small btn-delete-loc"><span class="icon"><i class="fas fa-trash"></i></span><span>Delete</span></button>
-      </div>`;
-            $('locations-grid').appendChild(card);
-            attachLocationEvents(card);
-
-            // reset
-            $('new-loc-name').value = '';
-            $('new-loc-address').value = '';
-            $('new-loc-coords').value = '';
-        });
-
-        // Edit / delete on existing cards
-        function attachLocationEvents(card) {
-            card.querySelector('.btn-edit-loc').addEventListener('click', () => {
-                $('edit-loc-name').value = card.querySelector('.location-name').textContent;
-                $('edit-loc-address').value = card.querySelector('.location-address').textContent;
-                $('edit-loc-coords').value = card.querySelector('.location-coords').textContent;
-                $('modal-edit-location').classList.add('is-open');
-
-                $('modal-edit-save').onclick = () => {
-                    card.querySelector('.location-name').textContent = $('edit-loc-name').value;
-                    card.querySelector('.location-address').textContent = $('edit-loc-address').value;
-                    card.querySelector('.location-coords').textContent = $('edit-loc-coords').value;
-                    $('modal-edit-location').classList.remove('is-open');
-                };
-            });
-
-            card.querySelector('.btn-delete-loc').addEventListener('click', () => {
-                $('modal-delete-location').classList.add('is-open');
-                $('modal-delete-confirm').onclick = () => {
-                    card.remove();
-                    $('modal-delete-location').classList.remove('is-open');
-                };
-            });
-        }
-
         qsa('.location-card').forEach(attachLocationEvents);
 
         /* ── modal close buttons ── */
@@ -1127,6 +994,10 @@ Original chat logs https://claude.ai/share/e1010a4a-69d4-40d9-9cf0-cca6ba5cd85b 
             $(id).addEventListener('click', () => $('modal-edit-location').classList.remove('is-open'));
         });
         $('modal-delete-cancel').addEventListener('click', () => $('modal-delete-location').classList.remove('is-open'));
+
+        ['modal-weather-close', 'modal-weather-close-btn'].forEach(id => {
+            $(id).addEventListener('click', () => $('modal-weather-location').classList.remove('is-open'));
+        });
 
         // Close modals on bg click
         qsa('.rx-modal-bg').forEach(bg => {

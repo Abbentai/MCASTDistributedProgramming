@@ -1,5 +1,7 @@
 //All manual code for frontend interactions with the API Gateway
 
+
+// -------- Account Section -------
 async function authenticateUser() {
     const email = document.getElementById('login-email').value;
     const password = document.getElementById('login-password').value;
@@ -81,30 +83,19 @@ async function CreateAccount() {
     }
 }
 
+// -------- Location Section -------
 async function fetchLocations(email) {
     try {
         const response = await fetch(`http://localhost:3000/api/location/${email}`);
         const locations = await response.json();
 
-        for (const location of locations) {
-            const item = document.createElement('div');
-            item.className = 'location-card';
-            item.innerHTML = `
-                 <div class="location-address">${location.houseNum}, ${location.street}</div>
-                    <div class="location-country">${location.city}, ${location.country}</div>
-                    <div class="location-actions">
-                        <button class="button is-outline-gold is-small btn-edit-loc">
-                            <span class="icon"><i class="fas fa-pen"></i></span>
-                            <span>Edit</span>
-                        </button>
-                        <button class="button is-ghost-danger is-small btn-delete-loc">
-                            <span class="icon"><i class="fas fa-trash"></i></span>
-                            <span>Delete</span>
-                        </button>
-                    </div>
-            `;
-            document.getElementById('locations-grid').appendChild(item);
-        }
+        document.getElementById('locations-grid').innerHTML = '';
+
+        locations.forEach(location => {
+            const card = buildLocationCard(location);
+            document.getElementById('locations-grid').appendChild(card);
+            attachLocationEvents(card);
+        });
 
         const locationSize = locations.length;
         document.getElementById('spots-stat-value').textContent = locationSize;
@@ -114,6 +105,127 @@ async function fetchLocations(email) {
     }
 }
 
+async function addLocation() {
+    debugger
+    const locationName = document.getElementById('new-loc-name').value.trim();
+    const houseNum = document.getElementById('new-loc-house-num').value.trim();
+    const street = document.getElementById('new-loc-street').value.trim();
+    const city = document.getElementById('new-loc-city').value.trim();
+    const country = document.getElementById('new-loc-country').value.trim();
+    const email = document.getElementById('new-loc-email').value;
+
+    try {
+        const response = await fetch('http://localhost:3000/api/location', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ locationName, houseNum, street, city, country, email })
+        });
+        const data = await response.json();
+
+        if (!response.ok) {
+            alert('Failed to save location. Please try again.');
+            return;
+        }
+
+        await fetchLocations(email);
+
+        //Reset form and clear errors
+        ['new-loc-name', 'new-loc-house-num', 'new-loc-street', 'new-loc-city', 'new-loc-country'].forEach(id => {
+            document.getElementById(id).value = '';
+            document.getElementById(id).style.borderColor = '';
+        });
+
+        ['new-loc-name-err', 'new-loc-house-num-err', 'new-loc-street-err', 'new-loc-city-err', 'new-loc-country-err'].forEach(id => {
+            document.getElementById(id).style.display = 'none';
+        });
+
+    } catch (err) {
+        console.error('Error adding location:', err);
+        alert('An error occurred while saving the location.');
+    }
+}
+
+async function editLocation(locationId, locationName, houseNum, street, city, country, email) {
+    try {
+        const response = await fetch(`http://localhost:3000/api/location/${locationId}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ locationName, houseNum, street, city, country, email })
+        });
+        if (!response.ok) {
+            alert('Failed to update location. Please try again.');
+        }
+    } catch (err) {
+        console.error('Error editing location:', err);
+        alert('An error occurred while updating the location.');
+    }
+}
+
+async function deleteLocation(locationId, email) {
+    try {
+        const response = await fetch(`http://localhost:3000/api/location/${locationId}`, {
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email })
+        });
+        if (!response.ok) {
+            alert('Failed to delete location. Please try again.');
+        }
+    } catch (err) {
+        console.error('Error deleting location:', err);
+        alert('An error occurred while deleting the location.');
+    }
+}
+
+async function fetchWeatherDetails(city) {
+    try {
+        const response = await fetch(`http://localhost:3000/api/location/weather/${city}`);
+        if (!response.ok) {
+            throw new Error('Weather statistics unreachable');
+        }
+        return await response.json();
+    } catch (err) {
+        console.error('Error fetching weather mapping data:', err);
+        return null;
+    }
+}
+
+function buildLocationCard(location) {
+    const card = document.createElement('div');
+    card.className = 'location-card';
+
+    // Store everything needed by attachLocationEvents as data attributes
+    card.dataset.locationId = location.id || location.locationId || '';
+    card.dataset.name = location.locationName || '';
+    card.dataset.house = location.houseNum || '';
+    card.dataset.street = location.street || '';
+    card.dataset.city = location.city || '';
+    card.dataset.country = location.country || '';
+
+    card.innerHTML = `
+        <div class="location-name">${location.locationName || ''}</div>
+        <div class="location-address">${location.houseNum}, ${location.street}</div>
+        <div class="location-country">${location.city}, ${location.country}</div>
+        <div class="location-actions" style="gap: 0.35rem;">
+            <button class="button is-outline-gold is-small btn-weather-loc">
+                <span class="icon"><i class="fas fa-cloud-sun"></i></span>
+                <span>Weather</span>
+            </button>
+            <button class="button is-outline-gold is-small btn-edit-loc">
+                <span class="icon"><i class="fas fa-pen"></i></span>
+                <span>Edit</span>
+            </button>
+            <button class="button is-ghost-danger is-small btn-delete-loc" >
+                <span class="icon"><i class="fas fa-trash"></i></span>
+                <span>Delete</span>
+            </button>
+        </div>
+    `;
+    return card;
+}
+//onclick="deleteLocation('${location.id || location.locationId}')"
+
+// -------- Notification Section -------
 async function fetchNotifications(email) {
     try {
         const response = await fetch(`http://localhost:3000/api/notification/${email}`);

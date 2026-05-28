@@ -10,6 +10,7 @@ Original chat logs https://claude.ai/share/e1010a4a-69d4-40d9-9cf0-cca6ba5cd85b 
     --purple: #6624b3;
     --purple-lt: #8c3be9;
     --gold-dk: #481b7c;
+    --blue: #1ca2d6;
     --text: #e8e9ef;
     --muted: #7b8099;
     --danger: #e05252;
@@ -192,6 +193,16 @@ h3,
     background: var(--panel);
 }
 
+.button.is-blue {
+    background: linear-gradient(135deg, var(--blue) 0%, var(--purple-lt) 100%);
+    color: #0b0d14;
+    font-weight: 600;
+    border: none;
+    border-radius: 8px;
+    letter-spacing: .04em;
+    transition: opacity .2s, transform .1s;
+}
+
 .button.is-gold {
     background: linear-gradient(135deg, var(--purple) 0%, var(--purple-lt) 100%);
     color: #0b0d14;
@@ -210,6 +221,15 @@ h3,
 
 .button.is-gold:active {
     transform: translateY(0);
+}
+
+.button.is-outline-blue {
+    background: transparent;
+    border: 1px solid var(--gold-dk);
+    color: var(--blue);
+    border-radius: 8px;
+    font-weight: 500;
+    transition: background .2s;
 }
 
 .button.is-outline-gold {
