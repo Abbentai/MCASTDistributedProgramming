@@ -102,17 +102,7 @@ if (require.main === module) {
             bookings.forEach((doc) => {
                 const data = doc.data();
 
-                //Parsing string temporarily before changed to a straight up timestamp 
-                const [day, month, year] = data.date.split('-');
-                const [hours, minutes] = data.time.split(':');
-
-                const dateTime = new Date(
-                    Number(year),
-                    Number(month) - 1,
-                    Number(day),
-                    Number(hours),
-                    Number(minutes)
-                );
+                const dateTime = new Date(`${data.date}T${data.time}`);
 
                 if (data.email === email) {
                     if (status === "past" && dateTime < now) {
