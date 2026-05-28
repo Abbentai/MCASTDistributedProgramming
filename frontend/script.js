@@ -1,6 +1,6 @@
 //All manual code for frontend interactions with the API Gateway
 //Gateway URL depending on development or production environment
-const API_BASE_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' ? 'http://localhost:3000': 'https://api-gateway-63oa.onrender.com';
+const API_BASE_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' ? 'http://localhost:3000' : 'https://api-gateway-63oa.onrender.com';
 
 // -------- Account Section -------
 async function authenticateUser() {
@@ -316,10 +316,19 @@ async function fetchBookings(email, status = 'past') {
             const row = document.createElement('tr');
             row.style.borderBottom = '1px solid rgba(255,255,255,.04)';
 
-            // Format Timestamp safely (handles seconds integers or raw date strings)
+            //Format date 
             let formattedDate = booking.date || '—';
-            if (booking.createdAt && booking.createdAt._seconds) {
+            if (booking.date) {
+                // Format the actual ride date + time cleanly
+                const dt = new Date(`${booking.date}T${booking.time || '00:00'}`);
+                formattedDate = dt.toLocaleString('en-GB', {
+                    day: '2-digit', month: 'short', year: 'numeric',
+                    hour: '2-digit', minute: '2-digit'
+                });
+            } else if (booking.createdAt && booking.createdAt._seconds) {
                 formattedDate = converttoTimeString(booking.createdAt._seconds);
+            } else {
+                formattedDate = '—';
             }
 
             // Capitalize status for clean UI pill presentation
@@ -369,10 +378,10 @@ async function fetchBookings(email, status = 'past') {
                 </tr>`;
         }
     }
-} 
+}
 
 async function createBooking() {
-    try{
+    try {
         const email = document.getElementById('f-email').value.trim();
         const startLocation = document.getElementById('f-start').value.trim();
         const endLocation = document.getElementById('f-end').value.trim();
@@ -380,7 +389,7 @@ async function createBooking() {
         const time = document.getElementById('f-time').value;
         const noOfPassengers = document.getElementById('f-passengers').value;
         const activeCabElement = document.querySelector('.cab-option.is-selected');
-    const cabType = activeCabElement ? activeCabElement.dataset.cab : 'Economic';
+        const cabType = activeCabElement ? activeCabElement.dataset.cab : 'Economic';
 
         const response = await fetch(`${API_BASE_URL}/api/booking`, {
             method: 'POST',
@@ -391,7 +400,7 @@ async function createBooking() {
         console.log('Booking created:', result);
         return result.booking.bookingId;
     }
-    catch(err){
+    catch (err) {
         console.error('Error creating booking:', err);
     }
 }
