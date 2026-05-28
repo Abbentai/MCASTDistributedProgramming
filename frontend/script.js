@@ -340,7 +340,7 @@ async function fetchBookings(email, status = 'past') {
                     <span class="tag-gold">${booking.cabType || booking.cab || 'Economic'}</span>
                 </td>
                 <td style="border:none; padding:.7rem .75rem; font-weight:600">
-                    €${parseFloat(booking.amount || booking.totalPrice || 0).toFixed(2)}
+                    €${parseFloat(booking.amount || booking.price || 0).toFixed(2)}
                 </td>
                 <td style="border:none; padding:.7rem .75rem">
                     <span style="color:${statusColor}; font-size:.8rem">
