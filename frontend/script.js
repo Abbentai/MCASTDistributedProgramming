@@ -1,5 +1,6 @@
 //All manual code for frontend interactions with the API Gateway
-
+//Gateway URL depending on development or production environment
+const API_BASE_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' ? 'http://localhost:3000': 'https://api-gateway-63oa.onrender.com/';
 
 // -------- Account Section -------
 async function authenticateUser() {
@@ -7,7 +8,7 @@ async function authenticateUser() {
     const password = document.getElementById('login-password').value;
 
     try {
-        const loginResponse = await fetch('http://localhost:3000/api/account/login', {
+        const loginResponse = await fetch(`${API_BASE_URL}/api/account/login`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email, password })
@@ -16,7 +17,7 @@ async function authenticateUser() {
         const loginData = await loginResponse.json();
 
         if (loginData.message === 'Login successful') {
-            const profileResponse = await fetch(`http://localhost:3000/api/account/${email}`, {
+            const profileResponse = await fetch(`${API_BASE_URL}/api/account/${email}`, {
                 headers: { 'Authorization': `Bearer ${loginData.token}` }
             });
             const user = await profileResponse.json();
@@ -50,7 +51,7 @@ async function CreateAccount() {
     document.getElementById('reg-failure').style.display = 'none';
 
     try {
-        const response = await fetch('http://localhost:3000/api/account', {
+        const response = await fetch(`${API_BASE_URL}/api/account`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ username, name, surname, email, age, password })
@@ -87,7 +88,7 @@ async function CreateAccount() {
 // -------- Location Section -------
 async function fetchLocations(email) {
     try {
-        const response = await fetch(`http://localhost:3000/api/location/${email}`);
+        const response = await fetch(`${API_BASE_URL}/api/location/${email}`);
         const locations = await response.json();
 
         document.getElementById('locations-grid').innerHTML = '';
@@ -115,7 +116,7 @@ async function addLocation() {
     const email = document.getElementById('new-loc-email').value;
 
     try {
-        const response = await fetch('http://localhost:3000/api/location', {
+        const response = await fetch(`${API_BASE_URL}/api/location`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ locationName, houseNum, street, city, country, email })
@@ -147,7 +148,7 @@ async function addLocation() {
 
 async function editLocation(locationId, locationName, houseNum, street, city, country, email) {
     try {
-        const response = await fetch(`http://localhost:3000/api/location/${locationId}`, {
+        const response = await fetch(`${API_BASE_URL}/api/location/${locationId}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ locationName, houseNum, street, city, country, email })
@@ -163,7 +164,7 @@ async function editLocation(locationId, locationName, houseNum, street, city, co
 
 async function deleteLocation(locationId, email) {
     try {
-        const response = await fetch(`http://localhost:3000/api/location/${locationId}`, {
+        const response = await fetch(`${API_BASE_URL}/api/location/${locationId}`, {
             method: 'DELETE',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email })
@@ -179,7 +180,7 @@ async function deleteLocation(locationId, email) {
 
 async function fetchWeatherDetails(city) {
     try {
-        const response = await fetch(`http://localhost:3000/api/location/weather/${city}`);
+        const response = await fetch(`${API_BASE_URL}/api/location/weather/${city}`);
         if (!response.ok) {
             throw new Error('Weather statistics unreachable');
         }
@@ -228,7 +229,7 @@ function buildLocationCard(location) {
 // -------- Notification Section -------
 async function fetchNotifications(email) {
     try {
-        const response = await fetch(`http://localhost:3000/api/notification/${email}`);
+        const response = await fetch(`${API_BASE_URL}/api/notification/${email}`);
         const notifications = await response.json();
 
         for (const notification of notifications) {
@@ -286,7 +287,7 @@ function converttoTimeString(timeInSeconds) {
 // -------- Booking Section -------
 async function fetchBookings(email, status = 'past') {
     try {
-        const response = await fetch(`http://localhost:3000/api/booking/getAllBookings/${email}/${status}`);
+        const response = await fetch(`${API_BASE_URL}/api/booking/getAllBookings/${email}/${status}`);
 
         if (!response.ok) {
             throw new Error(`Failed to fetch bookings: ${response.statusText}`);
@@ -381,7 +382,7 @@ async function createBooking() {
         const activeCabElement = document.querySelector('.cab-option.is-selected');
     const cabType = activeCabElement ? activeCabElement.dataset.cab : 'Economic';
 
-        const response = await fetch('http://localhost:3000/api/booking', {
+        const response = await fetch(`${API_BASE_URL}/api/booking`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email, startLocation, endLocation, date, time, noOfPassengers, cabType })
@@ -398,7 +399,7 @@ async function createBooking() {
 // ------- Price Breakdown Section -------
 async function calculatePrice(bookingId) {
     try {
-        const response = await fetch(`http://localhost:3000/api/payment/calculateprice/${bookingId}`);
+        const response = await fetch(`${API_BASE_URL}/api/payment/calculateprice/${bookingId}`);
         if (!response.ok) {
             throw new Error(`Failed to fetch price breakdown: ${response.statusText}`);
         }

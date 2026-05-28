@@ -4,9 +4,13 @@ const { createProxyMiddleware } = require('http-proxy-middleware');
 
 const app = express();
 
+const allowedOrigins = process.env.FRONTEND_URL
+    ? [process.env.FRONTEND_URL]
+    : ['http://localhost:5500', 'http://127.0.0.1:5500'];
+
 //CORS setup to allow requests from the frontend
 app.use(cors({
-    origin: ['http://localhost:5500', 'http://127.0.0.1:5500'],
+    origin: allowedOrigins,
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization'],
 }));
@@ -14,11 +18,11 @@ app.use(cors({
 //Proxy setup for microservices
 
 const services = {
-   account: 'http://localhost:3001/api/account',
-    notification: 'http://localhost:3001/api/notification',
-    booking: 'http://localhost:3002/api/booking',
-    payment: 'http://localhost:3003/api/payment',
-    location: 'http://localhost:3004/api/location',
+    account: process.env.ACCOUNT_SERVICE_URL || 'http://localhost:3001/api/account',
+    notification: process.env.NOTIFICATION_SERVICE_URL || 'http://localhost:3001/api/notification',
+    booking: process.env.BOOKING_SERVICE_URL || 'http://localhost:3002/api/booking',
+    payment: process.env.PAYMENT_SERVICE_URL || 'http://localhost:3003/api/payment',
+    location: process.env.LOCATION_SERVICE_URL || 'http://localhost:3004/api/location',
 };
 
 const callService = (target) => {
