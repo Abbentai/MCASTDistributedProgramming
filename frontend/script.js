@@ -1,6 +1,6 @@
 //All manual code for frontend interactions with the API Gateway
 //Gateway URL depending on development or production environment
-const API_BASE_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' ? 'http://localhost:3000': 'https://api-gateway-63oa.onrender.com/';
+const API_BASE_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' ? 'http://localhost:3000': 'https://api-gateway-63oa.onrender.com';
 
 // -------- Account Section -------
 async function authenticateUser() {
