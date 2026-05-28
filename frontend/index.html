@@ -1,0 +1,1010 @@
+<!-- Note that the HTML and CSS were generated via an LLM with manual tweaks being made from there
+Original chat logs https://claude.ai/share/e1010a4a-69d4-40d9-9cf0-cca6ba5cd85b -->
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cab Booking — Premium Taxi Service</title>
+    <script src="./script.js"></script>
+    <script src="./frontendscript.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="./style.css">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=DM+Sans:wght@300;400;500&display=swap"
+        rel="stylesheet" />
+</head>
+
+<body>
+
+    <!-- ═══════════════════════════════════════════
+     SCREEN: LOGIN
+═══════════════════════════════════════════ -->
+    <div id="screen-login" class="screen is-active">
+        <div class="login-card">
+            <div class="login-logo">
+                <div class="wordmark">Cab Booking Platform</div>
+                <div class="tagline">Nicholas Borg Distributed Programming THA</div>
+            </div>
+            <div class="gold-divider"></div>
+
+            <div class="field">
+                <label class="label">Email</label>
+                <div class="control has-icons-left">
+                    <input class="input" type="text" placeholder="your@email.com" id="login-email" />
+                    <span class="icon is-left" style="color:var(--muted)"><i class="fas fa-user"></i></span>
+                </div>
+            </div>
+
+            <div class="field" style="margin-top:1rem">
+                <label class="label">Password</label>
+                <div class="control has-icons-left has-icons-right">
+                    <input class="input" type="password" placeholder="••••••••" id="login-password" />
+                    <span class="icon is-left" style="color:var(--muted)"><i class="fas fa-lock"></i></span>
+                    <!-- <span class="icon is-right" style="color:var(--muted); cursor:pointer" id="toggle-pw">
+          <i class="fas fa-eye"></i>
+        </span> -->
+                </div>
+            </div>
+
+            <div id="login-error"
+                style="display:none; color:var(--danger); font-size:.82rem; margin:.5rem 0; display:none">
+                <i class="fas fa-exclamation-circle"></i> Invalid credentials: Your email or password is incorrect
+            </div>
+
+            <button class="button is-gold is-fullwidth" style="height:46px; font-size:.95rem" id="btn-login"
+                onclick="authenticateUser()">
+                <span class="icon"><i class="fas fa-arrow-right-to-bracket"></i></span>
+                <span>Sign In</span>
+            </button>
+
+            <div class="gold-divider" style="margin-top:1.5rem"></div>
+            <p style="text-align:center; margin-top:1rem; font-size:.85rem; color:var(--muted)">
+                Don't have an account?
+                <a id="btn-go-register" style="color:var(--gold); cursor:pointer; font-weight:500">Create one</a>
+            </p>
+        </div>
+    </div>
+
+
+    <!-- ═══════════════════════════════════════════
+     SCREEN: REGISTER
+═══════════════════════════════════════════ -->
+    <div id="screen-register" class="screen">
+        <div class="login-card" style="max-width:520px">
+            <div class="login-logo">
+                <div class="wordmark">Cab Booking Platform</div>
+                <div class="tagline">Create your account</div>
+            </div>
+            <div class="gold-divider"></div>
+
+            <!-- Row 1: Username -->
+            <div class="field">
+                <label class="label">Username</label>
+                <div class="control has-icons-left">
+                    <input class="input" type="text" placeholder="Choose a username" id="reg-username" />
+                    <span class="icon is-left" style="color:var(--muted)"><i class="fas fa-at"></i></span>
+                </div>
+                <p class="help" id="reg-username-err" style="display:none; color:var(--danger)">
+                    <i class="fas fa-circle-exclamation"></i> Username is required
+                </p>
+            </div>
+
+            <!-- Row 2: Name + Surname -->
+            <div class="columns" style="margin-top:1rem; margin-bottom:0">
+                <div class="column" style="padding-bottom:0">
+                    <div class="field">
+                        <label class="label">First Name</label>
+                        <div class="control has-icons-left">
+                            <input class="input" type="text" placeholder="John" id="reg-name" />
+                            <span class="icon is-left" style="color:var(--muted)"><i class="fas fa-user"></i></span>
+                        </div>
+                        <p class="help" id="reg-name-err" style="display:none; color:var(--danger)">
+                            <i class="fas fa-circle-exclamation"></i> Required
+                        </p>
+                    </div>
+                </div>
+                <div class="column" style="padding-bottom:0">
+                    <div class="field">
+                        <label class="label">Surname</label>
+                        <div class="control has-icons-left">
+                            <input class="input" type="text" placeholder="Smith" id="reg-surname" />
+                            <span class="icon is-left" style="color:var(--muted)"><i class="fas fa-user"></i></span>
+                        </div>
+                        <p class="help" id="reg-surname-err" style="display:none; color:var(--danger)">
+                            <i class="fas fa-circle-exclamation"></i> Required
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Row 3: Email + Age -->
+            <div class="columns" style="margin-top:1rem; margin-bottom:0">
+                <div class="column" style="padding-bottom:0">
+                    <div class="field">
+                        <label class="label">Email</label>
+                        <div class="control has-icons-left">
+                            <input class="input" type="email" placeholder="your@email.com" id="reg-email" />
+                            <span class="icon is-left" style="color:var(--muted)"><i class="fas fa-envelope"></i></span>
+                        </div>
+                        <p class="help" id="reg-email-err" style="display:none; color:var(--danger)">
+                            <i class="fas fa-circle-exclamation"></i> Enter a valid email
+                        </p>
+                    </div>
+                </div>
+                <div class="column is-narrow" style="padding-bottom:0; min-width:120px">
+                    <div class="field">
+                        <label class="label">Age</label>
+                        <div class="control has-icons-left">
+                            <input class="input" type="number" placeholder="25" min="18" max="120" id="reg-age"
+                                style="width:100%" />
+                            <span class="icon is-left" style="color:var(--muted)"><i
+                                    class="fas fa-cake-candles"></i></span>
+                        </div>
+                        <p class="help" id="reg-age-err" style="display:none; color:var(--danger)">
+                            <i class="fas fa-circle-exclamation"></i> Must be 18+
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Row 4: Password + Confirm -->
+            <div class="columns" style="margin-top:1rem; margin-bottom:0">
+                <div class="column" style="padding-bottom:0">
+                    <div class="field">
+                        <label class="label">Password</label>
+                        <div class="control has-icons-left">
+                            <input class="input" type="password" placeholder="Min. 8 characters" id="reg-password" />
+                            <span class="icon is-left" style="color:var(--muted)"><i class="fas fa-lock"></i></span>
+                        </div>
+                        <p class="help" id="reg-password-err" style="display:none; color:var(--danger)">
+                            <i class="fas fa-circle-exclamation"></i> Min. 8 characters
+                        </p>
+                    </div>
+                </div>
+                <div class="column" style="padding-bottom:0">
+                    <div class="field">
+                        <label class="label">Confirm Password</label>
+                        <div class="control has-icons-left">
+                            <input class="input" type="password" placeholder="Repeat password" id="reg-confirm" />
+                            <span class="icon is-left" style="color:var(--muted)"><i class="fas fa-lock"></i></span>
+                        </div>
+                        <p class="help" id="reg-confirm-err" style="display:none; color:var(--danger)">
+                            <i class="fas fa-circle-exclamation"></i> Passwords do not match
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Password strength bar -->
+            <div style="margin-top:1rem">
+                <div style="display:flex; justify-content:space-between; margin-bottom:.35rem">
+                    <span
+                        style="font-size:.72rem; letter-spacing:.1em; text-transform:uppercase; color:var(--muted)">Password
+                        strength</span>
+                    <span id="reg-strength-label" style="font-size:.72rem; color:var(--muted)">—</span>
+                </div>
+                <div style="height:4px; background:var(--border); border-radius:2px; overflow:hidden">
+                    <div id="reg-strength-bar"
+                        style="height:100%; width:0%; border-radius:2px; transition:width .3s, background .3s; background:var(--danger)">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Success banner (hidden until submit) -->
+            <div id="reg-success"
+                style="display:none; margin-top:1.25rem; background:rgba(76,175,130,.1); border:1px solid rgba(76,175,130,.3); border-radius:var(--radius); padding:1rem; text-align:center">
+                <div style="color:var(--success); font-size:1.4rem; margin-bottom:.4rem"><i
+                        class="fas fa-circle-check"></i></div>
+                <div style="font-family:'Playfair Display',serif; color:var(--success); font-size:1rem">Account created!
+                </div>
+                <div style="color:var(--muted); font-size:.82rem; margin-top:.3rem">Redirecting you to sign in…</div>
+            </div>
+
+            <div id="reg-failure"
+                style="display:none; margin-top:1.25rem; background:rgba(175, 76, 76, 0.1); border:1px solid rgba(175, 76, 76, 0.3); border-radius:var(--radius); padding:1rem; text-align:center">
+                <div style="color:var(--danger); font-size:1.4rem; margin-bottom:.4rem"><i
+                        class="fas fa-circle-xmark"></i></div>
+                <div style="font-family:'Playfair Display',serif; color:var(--danger); font-size:1rem">An issue occured
+                    when creating account! Please try again later
+                </div>
+            </div>
+
+            <button class="button is-gold is-fullwidth" onclick="ValidateAndRegister()"
+                style="height:46px; font-size:.95rem; margin-top:1.5rem" id="btn-register">
+                <span class="icon"><i class="fas fa-user-plus"></i></span>
+                <span>Create Account</span>
+            </button>
+
+            <div class="gold-divider" style="margin-top:1.5rem"></div>
+            <p style="text-align:center; margin-top:1rem; font-size:.85rem; color:var(--muted)">
+                Already have an account?
+                <a id="btn-go-login" style="color:var(--gold); cursor:pointer; font-weight:500">Sign in</a>
+            </p>
+        </div>
+    </div>
+
+
+    <!-- ═══════════════════════════════════════════
+     SCREEN: APP
+═══════════════════════════════════════════ -->
+    <div id="screen-app" class="screen" style="flex-direction:column">
+
+        <!-- TOPBAR -->
+        <nav class="topbar">
+            <div class="topbar-brand">Cab Booking</div>
+            <div class="topbar-spacer"></div>
+            <div class="topbar-actions">
+
+                <!-- Bell -->
+                <div class="notif-bell" id="btn-bell">
+                    <i class="fas fa-bell"></i>
+                    <div class="notif-badge" id="notif-badge"></div>
+                </div>
+
+                <!-- Notification Dropdown -->
+                <div class="notif-dropdown" id="notif-dropdown">
+                    <div class="notif-dropdown-header">
+                        <span>Notifications</span>
+                        <!-- <a>Mark all read</a> -->
+                    </div>
+                    <div class="notif-dropdown-list" id="notif-dropdown-list">
+                    </div>
+                </div>
+
+                <!-- User Pill -->
+                <div class="user-pill">
+                    <div class="user-avatar" id="user-avatar-text">A</div>
+                    <span class="user-name" id="user-display-name">Admin</span>
+                </div>
+
+                <!-- Logout -->
+                <button class="button is-outline-gold is-small" id="btn-logout">
+                    <span class="icon"><i class="fas fa-right-from-bracket"></i></span>
+                    <span>Logout</span>
+                </button>
+            </div>
+        </nav>
+
+        <!-- APP BODY -->
+        <div class="app-body">
+
+            <!-- SIDEBAR -->
+            <aside class="sidebar">
+                <div class="nav-section-label">Menu</div>
+
+                <div class="nav-item is-active" data-tab="dashboard">
+                    <span class="nav-icon"><i class="fas fa-gauge-high"></i></span>
+                    <span>Dashboard</span>
+                </div>
+                <div class="nav-item" data-tab="book">
+                    <span class="nav-icon"><i class="fas fa-car-side"></i></span>
+                    <span>Book a Ride</span>
+                </div>
+                <div class="nav-item" data-tab="locations">
+                    <span class="nav-icon"><i class="fas fa-map-pin"></i></span>
+                    <span>Saved Locations</span>
+                </div>
+                <div class="nav-item" data-tab="notifications">
+                    <span class="nav-icon"><i class="fas fa-bell"></i></span>
+                    <span>Notifications</span>
+                </div>
+            </aside>
+
+            <!-- MAIN -->
+            <main class="main-content">
+
+                <!-- ── TAB: DASHBOARD ───────────────────── -->
+                <div class="tab-panel is-active" id="tab-dashboard">
+                    <div class="page-header">
+                        <h2>Good afternoon, Admin</h2>
+                        <p>Here's your ride overview for today.</p>
+                    </div>
+
+                    <div class="stat-grid">
+                        <div class="stat-card">
+                            <div class="stat-label">Total Rides</div>
+                            <div id="rides-stat-value" class="stat-value">0</div>
+                            <div class="stat-icon"><i class="fas fa-route"></i></div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">Saved Spots</div>
+                            <div id="spots-stat-value" class="stat-value">0</div>
+                            <div class="stat-icon"><i class="fas fa-map-pin"></i></div>
+                        </div>
+                    </div>
+
+                    <!-- Recent rides -->
+                    <div class="rx-card">
+                        <div class="rx-card-title"
+                            style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                            <span><i class="fas fa-clock-rotate-left"></i> Recent Rides</span>
+
+                            <div class="select is-small">
+                                <select id="dashboard-ride-filter"
+                                    style="background: var(--panel); color: var(--text); border-color: var(--border);">
+                                    <option value="past" selected>Past Bookings</option>
+                                    <option value="upcoming">Upcoming Bookings</option>
+                                </select>
+                            </div>
+                        </div>
+                        <table class="table is-fullwidth" style="background:transparent; color:var(--text)">
+                            <thead>
+                                <tr style="border-bottom:1px solid var(--border)">
+                                    <th
+                                        style="color:var(--muted); font-size:.75rem; letter-spacing:.1em; text-transform:uppercase; border:none; padding:.6rem .75rem">
+                                        Ride ID</th>
+                                    <th
+                                        style="color:var(--muted); font-size:.75rem; letter-spacing:.1em; text-transform:uppercase; border:none; padding:.6rem .75rem">
+                                        Date</th>
+                                    <th
+                                        style="color:var(--muted); font-size:.75rem; letter-spacing:.1em; text-transform:uppercase; border:none; padding:.6rem .75rem">
+                                        Route</th>
+                                    <th
+                                        style="color:var(--muted); font-size:.75rem; letter-spacing:.1em; text-transform:uppercase; border:none; padding:.6rem .75rem">
+                                        Type</th>
+                                    <th
+                                        style="color:var(--muted); font-size:.75rem; letter-spacing:.1em; text-transform:uppercase; border:none; padding:.6rem .75rem">
+                                        Amount</th>
+                                    <th
+                                        style="color:var(--muted); font-size:.75rem; letter-spacing:.1em; text-transform:uppercase; border:none; padding:.6rem .75rem">
+                                        Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td colspan="6" style="text-align: center; color: var(--muted); padding: 1.5rem;">
+                                        No bookings found.
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- ── TAB: BOOK A RIDE ─────────────────── -->
+                <div class="tab-panel" id="tab-book">
+                    <div class="page-header">
+                        <h2>Book a Ride</h2>
+                        <p>Fill in the details below to reserve your taxi.</p>
+                    </div>
+
+                    <!-- Steps -->
+                    <div class="steps">
+                        <div class="step is-active" id="step-1">
+                            <div class="step-circle">1</div>
+                            <div class="step-label">Journey</div>
+                        </div>
+                        <div class="step-line"></div>
+                        <div class="step" id="step-2">
+                            <div class="step-circle">2</div>
+                            <div class="step-label">Vehicle</div>
+                        </div>
+                        <div class="step-line"></div>
+                        <div class="step" id="step-3">
+                            <div class="step-circle">3</div>
+                            <div class="step-label">Confirm</div>
+                        </div>
+                    </div>
+
+                    <!-- STEP 1: Journey -->
+                    <div id="book-step-1">
+                        <div class="rx-card">
+                            <div class="form-section-title">Pickup &amp; Drop-off</div>
+
+                            <div class="field">
+                                <label class="label">Start Location (lat, lng)</label>
+                                <div class="control has-icons-left">
+                                    <input class="input" type="text" id="f-start"
+                                        placeholder="35.865655760261035, 14.519315168765294"
+                                        value="35.865655760261035, 14.519315168765294" />
+                                    <span class="icon is-left" style="color:var(--gold)"><i
+                                            class="fas fa-location-dot"></i></span>
+                                </div>
+                            </div>
+
+                            <div class="field" style="margin-top:1rem">
+                                <label class="label">End Location (lat, lng)</label>
+                                <div class="control has-icons-left">
+                                    <input class="input" type="text" id="f-end"
+                                        placeholder="35.9211412732, 14.473955861070904"
+                                        value="35.9211412732, 14.473955861070904" />
+                                    <span class="icon is-left" style="color:var(--muted)"><i
+                                            class="fas fa-flag-checkered"></i></span>
+                                </div>
+                            </div>
+
+                            <div class="columns" style="margin-top:1rem">
+                                <div class="column">
+                                    <div class="field">
+                                        <label class="label">Date</label>
+                                        <div class="control">
+                                            <input class="input" type="date" id="f-date" value="2026-05-27" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="column">
+                                    <div class="field">
+                                        <label class="label">Time</label>
+                                        <div class="control">
+                                            <input class="input" type="time" id="f-time" value="13:30" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="column">
+                                    <div class="field">
+                                        <label class="label">Passengers</label>
+                                        <div class="control">
+                                            <div class="select is-fullwidth">
+                                                <select id="f-passengers">
+                                                    <option>1</option>
+                                                    <option selected>2</option>
+                                                    <option>3</option>
+                                                    <option>4</option>
+                                                    <option>5</option>
+                                                    <option>6</option>
+                                                    <option>7</option>
+                                                    <option>8</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="field" style="margin-top:.5rem">
+                                <label class="label">Email</label>
+                                <div class="control has-icons-left">
+                                    <input class="input" type="email" id="f-email" placeholder="your@email.com"
+                                        value="nbsexy4@gmail.com" />
+                                    <span class="icon is-left" style="color:var(--muted)"><i
+                                            class="fas fa-envelope"></i></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style="display:flex; justify-content:flex-end">
+                            <button class="button is-gold" id="btn-step1-next">
+                                Next: Choose Vehicle <i class="fas fa-arrow-right" style="margin-left:.5rem"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- STEP 2: Vehicle -->
+                    <div id="book-step-2" style="display:none">
+                        <div id="vehicleCard" class="rx-card">
+                            <div class="form-section-title">Select Cab Type</div>
+
+                            <div class="cab-type-group">
+                                <div class="cab-option is-selected" data-cab="Economic">
+                                    <div class="cab-icon">🚗</div>
+                                    <div class="cab-name">Economic</div>
+                                </div>
+                                <div class="cab-option" data-cab="Premium">
+                                    <div class="cab-icon">🚕</div>
+                                    <div class="cab-name">Premium</div>
+                                </div>
+                                <div class="cab-option" data-cab="Executive">
+                                    <div class="cab-icon">🚘</div>
+                                    <div class="cab-name">Executive</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style="display:flex; justify-content:space-between">
+                            <button class="button is-outline-gold" id="btn-step2-back">
+                                <i class="fas fa-arrow-left" style="margin-right:.5rem"></i> Back
+                            </button>
+                            <button class="button is-gold" id="btn-step2-next">
+                                Review Booking <i class="fas fa-arrow-right" style="margin-left:.5rem"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- STEP 3: Confirm -->
+                    <div id="book-step-3" style="display:none">
+                        <div class="rx-card">
+                            <div class="form-section-title">Booking Summary</div>
+                            <div id="booking-summary" style="display:grid; gap:.6rem">
+                                <!-- Populated by JS... shown as static for pure HTML/CSS -->
+                                <div
+                                    style="display:flex; justify-content:space-between; padding:.5rem 0; border-bottom:1px solid rgba(255,255,255,.05); font-size:.88rem">
+                                    <span style="color:var(--muted)">From</span>
+                                    <span id="sum-start"
+                                        style="text-align:right; max-width:240px; font-size:.82rem">35.865655760261035,
+                                        14.519315168765294</span>
+                                </div>
+                                <div
+                                    style="display:flex; justify-content:space-between; padding:.5rem 0; border-bottom:1px solid rgba(255,255,255,.05); font-size:.88rem">
+                                    <span style="color:var(--muted)">To</span>
+                                    <span id="sum-end"
+                                        style="text-align:right; max-width:240px; font-size:.82rem">35.9211412732,
+                                        14.473955861070904</span>
+                                </div>
+                                <div
+                                    style="display:flex; justify-content:space-between; padding:.5rem 0; border-bottom:1px solid rgba(255,255,255,.05); font-size:.88rem">
+                                    <span style="color:var(--muted)">Date &amp; Time</span>
+                                    <span id="sum-datetime">27/05/2026 at 13:30</span>
+                                </div>
+                                <div
+                                    style="display:flex; justify-content:space-between; padding:.5rem 0; border-bottom:1px solid rgba(255,255,255,.05); font-size:.88rem">
+                                    <span style="color:var(--muted)">Passengers</span>
+                                    <span id="sum-pax">2</span>
+                                </div>
+                                <div
+                                    style="display:flex; justify-content:space-between; padding:.5rem 0; border-bottom:1px solid rgba(255,255,255,.05); font-size:.88rem">
+                                    <span style="color:var(--muted)">Cab Type</span>
+                                    <span id="sum-cab" class="tag-gold">Economic</span>
+                                </div>
+                                <div
+                                    style="display:flex; justify-content:space-between; padding:.5rem 0; border-bottom:1px solid rgba(255,255,255,.05); font-size:.88rem">
+                                    <span style="color:var(--muted)">Email</span>
+                                    <span id="sum-email">nbsexy4@gmail.com</span>
+                                </div>
+                                <div
+                                    style="display:flex; justify-content:space-between; padding:.5rem 0; border-bottom:1px solid rgba(255,255,255,.05); font-size:.88rem">
+                                    <span style="color:var(--muted)">Discount Applied</span>
+                                    <span id="sum-discount">No discount</span>
+                                </div>
+
+                                <div
+                                    style="display:flex; justify-content:space-between; padding:.7rem 0; font-size:1rem; font-weight:700; color:var(--gold)">
+                                    <span>Total Price</span>
+                                    <span id="sum-total-price"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="booking-success"
+                            style="display:none; background:rgba(76,175,130,.1); border:1px solid rgba(76,175,130,.3); border-radius:var(--radius); padding:1.5rem; text-align:center; margin-bottom:1.5rem">
+                            <div style="font-size:2rem; color:var(--success); margin-bottom:.5rem"><i
+                                    class="fas fa-circle-check"></i></div>
+                            <div style="font-family:'Playfair Display',serif; font-size:1.2rem; color:var(--success)">
+                                Booking Confirmed!</div>
+                        </div>
+
+                        <div style="display:flex; justify-content:space-between" id="step3-buttons">
+                            <button class="button is-outline-gold" id="btn-step3-back">
+                                <i class="fas fa-arrow-left" style="margin-right:.5rem"></i> Back
+                            </button>
+                            <button class="button is-gold" id="btn-confirm-booking">
+                                <i class="fas fa-check" style="margin-right:.5rem"></i> Confirm Booking
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ── TAB: SAVED LOCATIONS ─────────────── -->
+                <div class="tab-panel" id="tab-locations">
+                    <div class="page-header">
+                        <h2>Saved Locations</h2>
+                        <p>Manage your frequently used addresses for faster booking.</p>
+                    </div>
+
+                    <!-- Add new location card -->
+                    <div class="add-location-card">
+                        <div class="rx-card-title"
+                            style="font-family:'Playfair Display',serif; font-size:1rem; color:var(--gold); margin-bottom:1rem">
+                            <i class="fas fa-plus-circle"></i> Add New Location
+                        </div>
+                        <div class="columns">
+                            <div class="column">
+                                <div class="field">
+                                    <label class="label">Location Name</label>
+                                    <input class="input" type="text" id="new-loc-name"
+                                        placeholder="e.g. Home, Office, Airport" />
+                                    <p class="help" id="new-loc-name-err" style="display:none; color:var(--danger)">
+                                        <i class="fas fa-circle-exclamation"></i> Location name is required
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="column">
+                                <div class="field">
+                                    <label class="label">House Number</label>
+                                    <input class="input" type="text" id="new-loc-house-num" placeholder="e.g. 3" />
+                                    <p class="help" id="new-loc-house-num-err"
+                                        style="display:none; color:var(--danger)">
+                                        <i class="fas fa-circle-exclamation"></i> House number is required
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="columns">
+                            <div class="column">
+                                <div class="field">
+                                    <label class="label">Street</label>
+                                    <input class="input" type="text" id="new-loc-street"
+                                        placeholder="e.g. Triq San Pawl" />
+                                    <p class="help" id="new-loc-street-err" style="display:none; color:var(--danger)">
+                                        <i class="fas fa-circle-exclamation"></i> Street is required
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="column">
+                                <div class="field">
+                                    <label class="label">City</label>
+                                    <input class="input" type="text" id="new-loc-city" placeholder="e.g. Zejtun" />
+                                    <p class="help" id="new-loc-city-err" style="display:none; color:var(--danger)">
+                                        <i class="fas fa-circle-exclamation"></i> City is required
+                                    </p>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="field">
+                            <label class="label">Country</label>
+                            <input class="input" type="text" id="new-loc-country" placeholder="e.g. Malta" />
+                            <p class="help" id="new-loc-country-err" style="display:none; color:var(--danger)">
+                                <i class="fas fa-circle-exclamation"></i> Country is required
+                            </p>
+                        </div>
+                        <!-- Hidden — populated by populateUI so addLocation always has the email -->
+                        <input type="hidden" id="new-loc-email" />
+                        <div style="display:flex; justify-content:flex-end; margin-top:.75rem">
+                            <button class="button is-gold" id="btn-add-location" onclick="validateLocation()">
+                                <i class="fas fa-plus" style="margin-right:.5rem"></i> Save Location
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Existing saved locations -->
+                    <div class="location-grid" id="locations-grid">
+                    </div>
+                </div>
+
+
+                <!-- ── TAB: NOTIFICATIONS ────────────────── -->
+                <div class="tab-panel" id="tab-notifications">
+                    <div class="page-header">
+                        <h2>Notifications</h2>
+                        <p>Stay updated on your rides and account activity.</p>
+                    </div>
+
+                    <!-- <div style="display:flex; justify-content:flex-end; margin-bottom:1rem">
+                        <button class="button is-outline-gold is-small">
+                            <i class="fas fa-check-double" style="margin-right:.4rem"></i> Mark all as read
+                        </button>
+                    </div> -->
+
+                    <div id="notif-list" class="notif-list">
+
+                    </div>
+                </div>
+
+            </main><!-- /main-content -->
+        </div><!-- /app-body -->
+    </div><!-- /screen-app -->
+
+
+    <!-- ═══════════════════════════════════════════
+     EDIT LOCATION MODAL
+═══════════════════════════════════════════ -->
+    <div class="rx-modal-bg" id="modal-edit-location">
+        <div class="rx-modal">
+            <div class="rx-modal-header">
+                <div class="rx-modal-title">Edit Location</div>
+                <div class="rx-modal-close" id="modal-edit-close"><i class="fas fa-xmark"></i></div>
+            </div>
+            <div class="field">
+                <label class="label">Location Name</label>
+                <input class="input" type="text" id="edit-loc-name" value="Home" />
+            </div>
+            <div class="field" style="margin-top:.9rem">
+                <label class="label">House Number</label>
+                <input class="input" type="text" id="edit-loc-house" />
+            </div>
+            <div class="field" style="margin-top:.9rem">
+                <label class="label">Street</label>
+                <input class="input" type="text" id="edit-loc-street" />
+            </div>
+            <div class="field" style="margin-top:.9rem">
+                <label class="label">City</label>
+                <input class="input" type="text" id="edit-loc-city" />
+            </div>
+            <div class="field" style="margin-top:.9rem">
+                <label class="label">Country</label>
+                <input class="input" type="text" id="edit-loc-country" />
+            </div>
+            <div style="display:flex; gap:.75rem; justify-content:flex-end; margin-top:1.5rem">
+                <button class="button is-outline-gold" id="modal-edit-cancel">Cancel</button>
+                <button class="button is-gold" id="modal-edit-save">
+                    <i class="fas fa-save" style="margin-right:.4rem"></i> Save Changes
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════
+     DELETE CONFIRM MODAL
+═══════════════════════════════════════════ -->
+    <div class="rx-modal-bg" id="modal-delete-location">
+        <div class="rx-modal" style="max-width:380px; text-align:center">
+            <div style="font-size:2rem; color:var(--danger); margin-bottom:1rem"><i
+                    class="fas fa-triangle-exclamation"></i></div>
+            <div class="rx-modal-title" style="margin-bottom:.5rem">Delete Location?</div>
+            <p style="color:var(--muted); font-size:.88rem; margin-bottom:1.5rem">This action cannot be undone. The
+                saved location will be permanently removed.</p>
+            <div style="display:flex; gap:.75rem; justify-content:center">
+                <button class="button is-outline-gold" id="modal-delete-cancel">Cancel</button>
+                <button class="button is-ghost-danger" id="modal-delete-confirm">
+                    <i class="fas fa-trash" style="margin-right:.4rem"></i> Delete
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════
+     CITY WEATHER MODAL
+═══════════════════════════════════════════ -->
+    <div class="rx-modal-bg" id="modal-weather-location">
+        <div class="rx-modal" style="max-width: 420px;">
+            <div class="rx-modal-header">
+                <div class="rx-modal-title" id="weather-modal-title">Weather Details</div>
+                <div class="rx-modal-close" id="modal-weather-close"><i class="fas fa-xmark"></i></div>
+            </div>
+
+            <div id="weather-loading" style="text-align: center; padding: 2rem 0;">
+                <span class="icon is-large" style="color: var(--gold); font-size: 2rem;">
+                    <i class="fas fa-spinner fa-pulse"></i>
+                </span>
+                <p style="color: var(--muted); margin-top: 0.5rem; font-size: 0.9rem;">Fetching weather updates...</p>
+            </div>
+
+            <div id="weather-content" style="display: none; margin-top: 1rem;">
+                <div
+                    style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem; background: rgba(201,168,76,.05); padding: 1rem; border-radius: var(--radius); border: 1px solid rgba(201,168,76,.15);">
+                    <div>
+                        <div id="weather-condition"
+                            style="font-family: 'Playfair Display', serif; font-size: 1.4rem; color: var(--text);">Sunny
+                        </div>
+                        <div id="weather-local-time"
+                            style="font-size: 0.78rem; color: var(--muted); margin-top: 0.2rem;">Local time: —</div>
+                    </div>
+                    <div id="weather-temp"
+                        style="font-family: 'Playfair Display', serif; font-size: 2.2rem; color: var(--gold); font-weight: 700;">
+                        31.2°C</div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                    <div
+                        style="background: var(--panel); padding: 0.75rem; border-radius: 6px; border: 1px solid var(--border);">
+                        <div
+                            style="font-size: 0.72rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em;">
+                            Feels Like</div>
+                        <div id="weather-feels"
+                            style="font-size: 1rem; color: var(--text); font-weight: 500; margin-top: 0.2rem;">—</div>
+                    </div>
+                    <div
+                        style="background: var(--panel); padding: 0.75rem; border-radius: 6px; border: 1px solid var(--border);">
+                        <div
+                            style="font-size: 0.72rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em;">
+                            Humidity</div>
+                        <div id="weather-humidity"
+                            style="font-size: 1rem; color: var(--text); font-weight: 500; margin-top: 0.2rem;">—</div>
+                    </div>
+                    <div
+                        style="background: var(--panel); padding: 0.75rem; border-radius: 6px; border: 1px solid var(--border);">
+                        <div
+                            style="font-size: 0.72rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em;">
+                            Wind Velocity</div>
+                        <div id="weather-wind"
+                            style="font-size: 1rem; color: var(--text); font-weight: 500; margin-top: 0.2rem;">—</div>
+                    </div>
+                    <div
+                        style="background: var(--panel); padding: 0.75rem; border-radius: 6px; border: 1px solid var(--border);">
+                        <div
+                            style="font-size: 0.72rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em;">
+                            UV Index</div>
+                        <div id="weather-uv"
+                            style="font-size: 1rem; color: var(--text); font-weight: 500; margin-top: 0.2rem;">—</div>
+                    </div>
+                </div>
+            </div>
+
+            <div style="display: flex; justify-content: flex-end; margin-top: 1.5rem;">
+                <button class="button is-gold" id="modal-weather-close-btn" style="min-width: 90px;">Close</button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- ══════════════════════════════
+  JAVASCRIPT — interactions only
+  (no business logic duplicated)
+══════════════════════════════ -->
+    <script>
+        /* ── helpers ── */
+        const $ = id => document.getElementById(id);
+        const show = id => { $(id).style.display = ''; };
+        const hide = id => { $(id).style.display = 'none'; };
+        const qs = sel => document.querySelector(sel);
+        const qsa = sel => [...document.querySelectorAll(sel)];
+
+        /* ── logout ── */
+        $('btn-logout').addEventListener('click', () => {
+            $('screen-app').classList.remove('is-active');
+            $('screen-login').classList.add('is-active');
+            $('login-username').value = '';
+            $('login-password').value = '';
+            $('login-error').style.display = 'none';
+        });
+
+        /* ── sidebar navigation ── */
+        function activateTab(tabName) {
+            qsa('.nav-item').forEach(n => n.classList.toggle('is-active', n.dataset.tab === tabName));
+            qsa('.tab-panel').forEach(p => p.classList.toggle('is-active', p.id === 'tab-' + tabName));
+
+            // Auto-refresh data when the user steps onto the dashboard explicitly
+            if (tabName === 'dashboard') {
+                const currentFilter = $('dashboard-ride-filter').value;
+                const loggedInEmail = $('f-email').value; // Grabbing active email contextual reference 
+                fetchBookings(loggedInEmail, currentFilter);
+            }
+        }
+        $('dashboard-ride-filter').addEventListener('change', (e) => {
+            const selectedStatus = e.target.value;
+            const loggedInEmail = $('f-email').value;
+            fetchBookings(loggedInEmail, selectedStatus);
+        });
+
+        qsa('.nav-item').forEach(item => {
+            item.addEventListener('click', () => activateTab(item.dataset.tab));
+        });
+        // Dashboard quick-book button
+        qs('[data-tab="book"]').addEventListener('click', () => activateTab('book'));
+
+        /* ── notification dropdown ── */
+        $('btn-bell').addEventListener('click', e => {
+            e.stopPropagation();
+            $('notif-dropdown').classList.toggle('is-open');
+        });
+        document.addEventListener('click', () => $('notif-dropdown').classList.remove('is-open'));
+
+        /* ── booking steps ── */
+        let currentCab = 'Economic';
+
+        // Step 1 → 2
+        $('btn-step1-next').addEventListener('click', () => {
+            hide('book-step-1');
+            show('book-step-2');
+            $('step-1').classList.remove('is-active');
+            $('step-1').classList.add('is-done');
+            $('step-1').querySelector('.step-circle').innerHTML = '<i class="fas fa-check"></i>';
+            $('step-2').classList.add('is-active');
+        });
+
+        // Step 2 ← back
+        $('btn-step2-back').addEventListener('click', () => {
+            show('book-step-1');
+            hide('book-step-2');
+            $('step-2').classList.remove('is-active');
+            $('step-1').classList.remove('is-done');
+            $('step-1').classList.add('is-active');
+            $('step-1').querySelector('.step-circle').textContent = '1';
+        });
+
+        // Step 2 → 3
+        $('btn-step2-next').addEventListener('click', async () => {
+            const bookingId = await createBooking();
+            const priceData = await calculatePrice(bookingId);
+            $('sum-email').textContent = $('f-email').value;
+
+            // Total price
+            $('sum-total-price').textContent = `€${priceData.totalPrice}`;
+
+            // Discount display
+            if (priceData.discount < 1) {
+                const discountPercent = Math.round((1 - priceData.discount) * 100);
+
+                $('sum-discount').innerHTML =
+                    `<span class="tag-gold">${discountPercent}% OFF</span>`;
+
+                $('sum-discount').style.color = 'var(--success)';
+            } else {
+                $('sum-discount').textContent = 'No discount';
+                $('sum-discount').style.color = 'var(--muted)';
+            }
+
+            hide('book-step-2');
+            show('book-step-3');
+            $('step-2').classList.remove('is-active');
+            $('step-2').classList.add('is-done');
+            $('step-2').querySelector('.step-circle').innerHTML = '<i class="fas fa-check"></i>';
+            $('step-3').classList.add('is-active');
+            // populate summary
+            $('sum-start').textContent = $('f-start').value || '—';
+            $('sum-end').textContent = $('f-end').value || '—';
+            $('sum-datetime').textContent = $('f-date').value + ' at ' + $('f-time').value;
+            $('sum-pax').textContent = $('f-passengers').value;
+            $('sum-cab').textContent = currentCab;
+            $('sum-email').textContent = $('f-email').value;
+        });
+
+        // Step 3 ← back
+        $('btn-step3-back').addEventListener('click', () => {
+            show('book-step-2');
+            hide('book-step-3');
+            $('step-3').classList.remove('is-active');
+            $('step-2').classList.remove('is-done');
+            $('step-2').classList.add('is-active');
+            $('step-2').querySelector('.step-circle').textContent = '2';
+            $('booking-success').style.display = 'none';
+            $('step3-buttons').style.display = '';
+        });
+
+        // Confirm booking
+        $('btn-confirm-booking').addEventListener('click', () => {
+            $('booking-success').style.display = 'block';
+            $('step3-buttons').style.display = 'none';
+            $('step-3').classList.remove('is-active');
+            $('step-3').classList.add('is-done');
+            $('step-3').querySelector('.step-circle').innerHTML = '<i class="fas fa-check"></i>';
+        });
+
+        // Cab type selection
+        qsa('.cab-option').forEach(opt => {
+            opt.addEventListener('click', () => {
+                qsa('.cab-option').forEach(o => o.classList.remove('is-selected'));
+                opt.classList.add('is-selected');
+                currentCab = opt.dataset.cab;
+            });
+        });
+
+        qsa('.location-card').forEach(attachLocationEvents);
+
+        /* ── modal close buttons ── */
+        ['modal-edit-close', 'modal-edit-cancel'].forEach(id => {
+            $(id).addEventListener('click', () => $('modal-edit-location').classList.remove('is-open'));
+        });
+        $('modal-delete-cancel').addEventListener('click', () => $('modal-delete-location').classList.remove('is-open'));
+
+        ['modal-weather-close', 'modal-weather-close-btn'].forEach(id => {
+            $(id).addEventListener('click', () => $('modal-weather-location').classList.remove('is-open'));
+        });
+
+        // Close modals on bg click
+        qsa('.rx-modal-bg').forEach(bg => {
+            bg.addEventListener('click', e => { if (e.target === bg) bg.classList.remove('is-open'); });
+        });
+
+        /* ── screen switching: login <-> register ── */
+        function showScreen(id) {
+            qsa('.screen').forEach(s => s.classList.remove('is-active'));
+            $(id).classList.add('is-active');
+        }
+
+        $('btn-go-register').addEventListener('click', () => showScreen('screen-register'));
+        $('btn-go-login').addEventListener('click', () => showScreen('screen-login'));
+
+        /* ── password strength meter ── */
+        $('reg-password').addEventListener('input', () => {
+            const val = $('reg-password').value;
+            const bar = $('reg-strength-bar');
+            const lbl = $('reg-strength-label');
+            let score = 0;
+            if (val.length >= 8) score++;
+            if (/[A-Z]/.test(val)) score++;
+            if (/[0-9]/.test(val)) score++;
+            if (/[^A-Za-z0-9]/.test(val)) score++;
+            const levels = [
+                { w: '0%', color: 'var(--border)', text: '-' },
+                { w: '25%', color: 'var(--danger)', text: 'Weak' },
+                { w: '50%', color: '#e09c52', text: 'Fair' },
+                { w: '75%', color: 'var(--gold)', text: 'Good' },
+                { w: '100%', color: 'var(--success)', text: 'Strong' },
+            ];
+            const lvl = val.length === 0 ? levels[0] : levels[score] || levels[1];
+            bar.style.width = lvl.w;
+            bar.style.background = lvl.color;
+            lbl.textContent = lvl.text;
+            lbl.style.color = lvl.color;
+        });
+    </script>
+</body>
+
+</html>
