@@ -1,7 +1,15 @@
 const express = require('express');
+const cors = require('cors');
 const { createProxyMiddleware } = require('http-proxy-middleware');
 
 const app = express();
+
+//CORS setup to allow requests from the frontend
+app.use(cors({
+    origin: ['http://localhost:5500', 'http://127.0.0.1:5500'],
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+}));
 
 //Proxy setup for microservices
 
@@ -47,3 +55,4 @@ app.listen(3000, () => {
     console.log('API Gateway is running on port 3000');
     console.log("URL because im lazy: http://localhost:3000/");
 });
+
