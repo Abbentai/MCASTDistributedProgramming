@@ -26,10 +26,10 @@ if (require.main === module) {
         //Creates a new booking, uploads it to firestore under bookings/{bookingId}, and prevents overwriting existing bookings
         //startLocation and endLocation are coordinates in the form of { lat: number, lng: number }
         try {
-            const { houseNum, street, city, country, email } = req.body;
+            const { locationName, houseNum, street, city, country, email } = req.body;
 
             //Input validation
-            if (!houseNum || !street || !city || !country || !email) {
+            if (!locationName || !houseNum || !street || !city || !country || !email) {
                 return res.status(400).json({ error: 'All fields are required!' });
             }
 
@@ -39,6 +39,7 @@ if (require.main === module) {
 
             //Constructing location data
             const locationData = {
+                locationName,
                 houseNum,
                 street,
                 city,
@@ -70,7 +71,7 @@ if (require.main === module) {
         //Updates an existing location based on locationId
         try {
             let { locationId } = req.params;
-            const { houseNum, street, city, country, email } = req.body;
+            const { locationName, houseNum, street, city, country, email } = req.body;
 
             locationId = locationId.trim();
 
@@ -79,7 +80,7 @@ if (require.main === module) {
                 return res.status(400).json({ error: 'Email is required!' });
             }
 
-            if (!houseNum && !street && !city && !country) {
+            if (!locationName && !houseNum && !street && !city && !country) {
                 return res.status(400).json({ error: 'At least one field must be provided to update!' });
             }
 
@@ -97,6 +98,7 @@ if (require.main === module) {
 
             //Constructing update data
             const updateData = {
+                locationName: locationName,
                 houseNum: houseNum,
                 street: street,
                 city: city,

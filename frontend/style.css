@@ -1,3 +1,6 @@
+/* Note that the HTML and CSS were generated via an LLM with manual tweaks being made from there
+Original chat logs https://claude.ai/share/e1010a4a-69d4-40d9-9cf0-cca6ba5cd85b */
+
 /* ── TOKENS ───────────────────────────────── */
 :root {
     --bg: #0b0d14;
@@ -117,6 +120,33 @@ h3,
     background: linear-gradient(90deg, transparent, var(--purple), transparent);
     margin: 1.5rem 0;
     opacity: .4;
+}
+
+/* ── REGISTER SCREEN ──────────────────────── */
+#screen-register {
+  min-height: 100vh;
+  align-items: center;
+  justify-content: center;
+  background:
+    radial-gradient(ellipse 80% 60% at 80% 10%, rgba(201,168,76,.12) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 80% at 20% 90%, rgba(201,168,76,.07) 0%, transparent 60%),
+    var(--bg);
+}
+
+#screen-register .login-card {
+  max-width: 520px;
+  animation: fadeUp .5s ease both;
+}
+
+/* Tighten Bulma column padding inside the register card */
+#screen-register .columns {
+  margin-left: -.5rem;
+  margin-right: -.5rem;
+}
+
+#screen-register .columns .column {
+  padding-left: .5rem;
+  padding-right: .5rem;
 }
 
 /* ── BULMA OVERRIDES ──────────────────────── */
@@ -679,7 +709,7 @@ h3,
     line-height: 1.4;
 }
 
-.location-coords {
+.location-country {
     font-size: .72rem;
     color: var(--muted);
     opacity: .6;
