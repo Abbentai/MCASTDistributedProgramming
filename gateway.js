@@ -24,17 +24,18 @@ const services = {
     payment: process.env.PAYMENT_SERVICE_URL || 'http://localhost:3003/api/payment',
     location: process.env.LOCATION_SERVICE_URL || 'http://localhost:3004/api/location',
 };
-
 const callService = (target) => {
     return createProxyMiddleware({
         target,
         changeOrigin: true,
+        pathRewrite: {
+            '^/api/payment': '/api/payment', 
+        },
         onProxyReq: (proxyReq, req, res) => {
             console.log(`GATEWAY: ${req.method} ${req.originalUrl} -> ${target}`);
         },
         onError: (err, req, res) => {
             console.error(`[GATEWAY ERROR: ${req.method} ${req.originalUrl}`, err.message);
-
             res.status(500).json({
                 error: 'Gateway error',
                 details: err.message,
